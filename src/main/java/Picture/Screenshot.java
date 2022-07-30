@@ -91,7 +91,7 @@ public class Screenshot
         GraphicsEnvironment ge=GraphicsEnvironment.getLocalGraphicsEnvironment();
         ge.registerFont(font);
         Graphics2D graphic=ge.createGraphics(image);
-        graphic.setBackground(Color.orange);
+        graphic.setBackground(new Color(255,255,255,0));
         graphic.clearRect(0,0,width,height);
         graphic.setBackground(Color.white);
         graphic.setPaint(Color.black);
@@ -129,7 +129,6 @@ public class Screenshot
             }
             cumuH+=curH+msgSplit;
         }
-        ImageIO.write(image,"png",new File("C:\\Users\\Vicky\\Desktop\\bot-jar\\cfg\\a.png"));
         return image;
     }
 }

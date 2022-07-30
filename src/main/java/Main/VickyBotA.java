@@ -2,18 +2,26 @@ package Main;
 
 import Eliza.ElizaMain;
 import Picture.Screenshot;
+import Utility.CustomPair;
+import com.hellokaton.webp.WebpIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.RestrictChatMember;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
 import org.telegram.telegrambots.meta.api.objects.ChatPermissions;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.IOException;
+import java.io.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,13 +42,17 @@ import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 public class VickyBotA extends AbilityBot {
     static final int maxEliza=1000;
+    static final int maxSS=1000;
     static ElizaMain[] eliza;
+    static boolean[] ssMode;
+    static List<Message>[] ssTmp;
     static Map<Long,Integer> elizaMap;
+    static Map<Long,Integer> ssMap;
     static boolean[] isElizaOccupied;
+    static boolean[] isSSOccupied;
+    static long sth=3827381L;
     static final String scriptPathname = "./cfg/ElizaScript.txt";
     static long curTime,timeH,timeM,timeS;
-    static List<Message> sstmp;
-    static boolean ssmode;
     static Logger logger= LoggerFactory.getLogger(VickyBotA.class);
     public VickyBotA()
     {
@@ -48,6 +60,10 @@ public class VickyBotA extends AbilityBot {
         eliza=new ElizaMain[maxEliza];
         elizaMap=new HashMap<>();
         isElizaOccupied=new boolean[maxEliza];
+        ssMode=new boolean[maxSS];
+        ssTmp=new List[maxSS];
+        ssMap=new HashMap<>();
+        isSSOccupied=new boolean[maxSS];
     }
     @Override
     public long creatorId()
@@ -331,7 +347,7 @@ public class VickyBotA extends AbilityBot {
                 .info("Take a screenshot.")
                 .input(0)
                 .locality(ALL)
-                .privacy(ADMIN)
+                .privacy(PUBLIC)
                 .action(ctx->
                 {
                     Message reply=ctx.update().getMessage().getReplyToMessage();
@@ -345,40 +361,95 @@ public class VickyBotA extends AbilityBot {
                     }
                     else
                     {
+                        long pair=ctx.chatId()*sth+ctx.update().getMessage().getFrom().getId();
+                        if(!ssMap.containsKey(pair))
+                        {
+                            for(int i=0;i<maxSS;i++)if(!isSSOccupied[i])
+                            {
+                                isSSOccupied[i]=true;
+                                ssMap.put(pair,i);
+                                break;
+                            }
+                        }
+                        int cur=ssMap.get(pair);
                         if(ctx.arguments().length==0)
                         {
-                            if(ssmode)
+                            if(ssMode[cur])
                             {
-                                sstmp.add(reply);
+                                ssTmp[cur].add(reply);
                             }
                             else
                             {
-                                sstmp=new ArrayList<>();
-                                sstmp.add(reply);
+                                List<Message> ssTmpT=new ArrayList<>();
+                                isSSOccupied[cur]=false;
+                                ssMap.remove(pair);
                                 try {
-                                    Screenshot.screenshot(sstmp,ctx.chatId());
-                                    silent.send("Picture saved. Vicky, check it?",ctx.chatId());
+                                    ssTmpT.add(reply);
+                                    InputFile inputFile=new InputFile();
+                                    int ran=(int)(random()*1000000000);
+                                    File tmp=new File("./cache/"+ran+".png");
+                                    File tmpW=new File("./cache/"+ran+".webp");
+                                    ImageIO.write(Screenshot.screenshot(ssTmpT,ctx.chatId()),"png",tmp);
+                                    WebpIO webpIO=new WebpIO();
+                                    webpIO.toWEBP(tmp,tmpW);
+                                    SendSticker sendSticker= SendSticker.builder().sticker(inputFile).chatId(ctx.chatId().toString()).build();
+                                    inputFile.setMedia(tmp,ctx.chatId().toString());
+                                    try
+                                    {
+                                        this.execute(sendSticker);
+                                        logger.info("Sent screenshot to: "+ctx.chatId());
+                                        logger.info("By: "+ctx.update().getMessage().getFrom().getId());
+                                    }
+                                    catch(Exception e)
+                                    {
+                                        logger.error(e.toString());
+                                    }
+                                    tmp.delete();
+                                    tmpW.delete();
                                 } catch (Exception e) {
                                     silent.send("ERR: "+e,ctx.chatId());
+                                    logger.error(e.toString());
                                 }
                             }
                         }
                         else if(ctx.firstArg().toLowerCase().startsWith("begin"))
                         {
-                            ssmode=true;
-                            sstmp=new ArrayList<>();
-                            sstmp.add(reply);
+                            ssMode[cur]=true;
+                            ssTmp[cur]=new ArrayList<>();
+                            ssTmp[cur].add(reply);
                         }
                         else if(ctx.firstArg().toLowerCase().startsWith("end"))
                         {
-                            if(!ssmode)sstmp=new ArrayList<>();
-                            sstmp.add(reply);
-                            ssmode=false;
+                            if(!ssMode[cur])ssTmp[cur]=new ArrayList<>();;
+                            ssTmp[cur].add(reply);
+                            ssMode[cur]=false;
+                            isSSOccupied[cur]=false;
+                            ssMap.remove(pair);
                             try {
-                                Screenshot.screenshot(sstmp,ctx.chatId());
-                                silent.send("Picture saved. Vicky, check it?",ctx.chatId());
+                                InputFile inputFile=new InputFile();
+                                int ran=(int)(random()*1000000000);
+                                File tmp=new File("./cache/"+ran+".png");
+                                File tmpW=new File("./cache/"+ran+".webp");
+                                ImageIO.write(Screenshot.screenshot(ssTmp[cur],ctx.chatId()),"png",tmp);
+                                WebpIO webpIO=new WebpIO();
+                                webpIO.toWEBP(tmp,tmpW);
+                                SendSticker sendSticker= SendSticker.builder().sticker(inputFile).chatId(ctx.chatId().toString()).build();
+                                inputFile.setMedia(tmp,ctx.chatId().toString());
+                                try
+                                {
+                                    this.execute(sendSticker);
+                                    logger.info("Sent screenshot to: "+ctx.chatId());
+                                    logger.info("By: "+ctx.update().getMessage().getFrom().getId());
+                                }
+                                catch(Exception e)
+                                {
+                                    logger.error(e.toString());
+                                }
+                                tmp.delete();
+                                tmpW.delete();
                             } catch (Exception e) {
                                 silent.send("ERR: "+e,ctx.chatId());
+                                logger.error(e.toString());
                             }
                         }
                         else

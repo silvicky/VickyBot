@@ -8,12 +8,12 @@ import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.time.Instant;
-import java.util.Date;
 
 public class Main {
 
@@ -26,7 +26,6 @@ public class Main {
     public static String groupID;
     public static VickyBotA bot;
     static Logger logger= LoggerFactory.getLogger(Main.class);
-
 
     public static void main(String[] args) throws Exception {
         File cacheFolder=new File("./cache/");
