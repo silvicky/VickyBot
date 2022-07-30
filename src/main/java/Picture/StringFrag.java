@@ -41,6 +41,7 @@ public class StringFrag {
         List<String>ans=new ArrayList<>();
         ListAndVal tmp;
         int maxVal=0;
+        if(source==null||source.length()==0)source=" ";
         while(source.contains("\n"))
         {
             tmp=stringFragPerLine(source.substring(0,source.indexOf("\n")));

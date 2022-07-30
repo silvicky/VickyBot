@@ -29,24 +29,24 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 public class Screenshot
 {
     static int fontHeight=24;
-    static int width=512;
+    static int maxWidth=512;
     static int split=8;
     static int avatarSize=64;
     static int padding=24;
     static int msgSplit=4;
-    static int height;
-    public static int maxLen;
+    static int maxLen=maxWidth-avatarSize-padding*5;
     static BufferedImage xImg;
     static Graphics2D xG2D;
     public static FontRenderContext frc;
     public static Font font;
     public static BufferedImage screenshot(List<Message> msg, long target) throws Exception, FontFormatException {
+        int width;
+        int height;
         height=msgSplit;
         List<String>[] frag=new List[msg.size()];
         int[] msgWidth=new int[msg.size()];
         Map<Long,String> avatar=new HashMap<>();
         int maxWidth=0;
-        maxLen=width-avatarSize-padding*5;
         long lastUser=0L,curID;
         String name;
         TextLayout textLayout;
