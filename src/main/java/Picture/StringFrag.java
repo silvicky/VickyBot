@@ -17,10 +17,11 @@ public class StringFrag {
         this.font=font;
         this.maxLen=maxLen;
     }
-    List<String> stringFragPerLine(String source)
+    ListAndVal stringFragPerLine(String source)
     {
         List<String>ans=new ArrayList<>();
-        int lastRul=0;
+        if(source.length()==0)source=" ";
+        int lastRul=0,maxVal=0;
         BufferedImage img=new BufferedImage(100,100,2);
         Graphics2D graphic=GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(img);
         FontRenderContext fontRenderContext=graphic.getFontRenderContext();
@@ -30,27 +31,38 @@ public class StringFrag {
         {
             textLayout=new TextLayout(source.substring(lastRul,i+1),font,fontRenderContext);
             Rectangle2D rectangle2D=textLayout.getBounds();
-            if(Math.floor(rectangle2D.getWidth()*scope)>maxLen)
+            if((int)(rectangle2D.getWidth()*scope)>maxLen)
             {
                 ans.add(source.substring(lastRul,i));
                 lastRul=i;
             }
+            else
+            {
+                maxVal=Math.max(maxVal,(int)(rectangle2D.getWidth()*scope));
+            }
         }
+        textLayout=new TextLayout(source.substring(lastRul),font,fontRenderContext);
+        Rectangle2D rectangle2D=textLayout.getBounds();
+        maxVal=Math.max(maxVal,(int)(rectangle2D.getWidth()*scope));
         ans.add(source.substring(lastRul));
-        return ans;
+        return new ListAndVal(ans,maxVal);
     }
-    public List<String> stringFrag(String source)
+    public ListAndVal stringFrag(String source)
     {
         List<String>ans=new ArrayList<>();
-        List<String>tmp;
+        ListAndVal tmp;
+        int maxVal=0;
         while(source.contains("\n"))
         {
             tmp=stringFragPerLine(source.substring(0,source.indexOf("\n")));
-            ans.addAll(tmp);
+            ans.addAll(tmp.list);
+            maxVal=Math.max(maxVal,tmp.val);
             source=source.substring(source.indexOf("\n")+1);
         }
+        if(source.length()==0)source=" ";
         tmp=stringFragPerLine(source);
-        ans.addAll(tmp);
-        return ans;
+        ans.addAll(tmp.list);
+        maxVal=Math.max(maxVal,tmp.val);
+        return new ListAndVal(ans,maxVal);
     }
 }

@@ -1,13 +1,19 @@
 import Eliza.ElizaMain;
+import Picture.Screenshot;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.RestrictChatMember;
 import org.telegram.telegrambots.meta.api.objects.ChatPermissions;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 
+import java.awt.*;
+import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static LispStyle.LispStyle.evaluate;
@@ -28,6 +34,8 @@ public class VickyBotA extends AbilityBot {
     static boolean[] isElizaOccupied;
     static final String scriptPathname = "./cfg/ElizaScript.txt";
     static long curTime,timeH,timeM,timeS;
+    static List<Message> sstmp;
+    static boolean ssmode;
     public VickyBotA()
     {
         super(Main.token,Main.name);
@@ -306,6 +314,71 @@ public class VickyBotA extends AbilityBot {
                         String msg=ctx.update().getMessage().getText().toLowerCase();
                         try{silent.send(Long.toString(evaluate(msg.substring(msg.indexOf(" ")+1))),ctx.chatId());}
                         catch(Exception e){silent.send("ERR: "+e,ctx.chatId());}
+                    }
+                })
+                .build();
+    }
+    public Ability screenshot()
+    {
+        return Ability.builder()
+                .name("ss")
+                .info("Take a screenshot.")
+                .input(0)
+                .locality(ALL)
+                .privacy(ADMIN)
+                .action(ctx->
+                {
+                    Message reply=ctx.update().getMessage().getReplyToMessage();
+                    if(reply==null)
+                    {
+                        silent.send(
+                                "Reply to something to use it.\n" +
+                                        "/ss - Capture this only.\n" +
+                                        "/ss begin - Capture from this. Use /ss after this.\n" +
+                                        "/ss end - Capture up to this.",ctx.chatId());
+                    }
+                    else
+                    {
+                        if(ctx.arguments().length==0)
+                        {
+                            if(ssmode)
+                            {
+                                sstmp.add(reply);
+                            }
+                            else
+                            {
+                                sstmp=new ArrayList<>();
+                                sstmp.add(reply);
+                                try {
+                                    Screenshot.screenshot(sstmp,ctx.chatId());
+                                    silent.send("Picture saved. Vicky, check it?",ctx.chatId());
+                                } catch (Exception e) {
+                                    silent.send("ERR: "+e,ctx.chatId());
+                                }
+                            }
+                        }
+                        else if(ctx.firstArg().toLowerCase().startsWith("begin"))
+                        {
+                            ssmode=true;
+                            sstmp=new ArrayList<>();
+                            sstmp.add(reply);
+                        }
+                        else if(ctx.firstArg().toLowerCase().startsWith("end"))
+                        {
+                            if(!ssmode)sstmp=new ArrayList<>();
+                            sstmp.add(reply);
+                            ssmode=false;
+                            try {
+                                Screenshot.screenshot(sstmp,ctx.chatId());
+                                silent.send("Picture saved. Vicky, check it?",ctx.chatId());
+                            } catch (Exception e) {
+                                silent.send("ERR: "+e,ctx.chatId());
+                            }
+                        }
+                        else
+                        {
+                            silent.send("Unknown argument.",ctx.chatId());
+                        }
                     }
                 })
                 .build();
