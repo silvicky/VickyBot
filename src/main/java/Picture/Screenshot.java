@@ -57,7 +57,7 @@ public class Screenshot
         xImg=new BufferedImage(100,100,2);
         xG2D=GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(xImg);
         frc=xG2D.getFontRenderContext();
-        GetUserProfilePhotos getUserProfilePhotos;
+        List<List<PhotoSize>> userPhotos;
         GetFile getFile;
         PhotoSize ps;
         for(int i=0;i<msg.size();i++)
@@ -66,8 +66,8 @@ public class Screenshot
             ListAndVal tmp=stringFrag.stringFrag(msg.get(i).getText());
             frag[i]=tmp.list;
             msgWidth[i]=tmp.val;
-            getUserProfilePhotos=new GetUserProfilePhotos(curID,0,1);
-            ps=bot.execute(getUserProfilePhotos).getPhotos().get(0).get(0);
+            userPhotos=bot.execute(new GetUserProfilePhotos(curID)).getPhotos();
+            ps=userPhotos.get(userPhotos.size()-1).get(0);
             avatar.put(curID, ps.getFileId());
             if(curID!=lastUser)
             {
