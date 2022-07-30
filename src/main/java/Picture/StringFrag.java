@@ -9,6 +9,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static Picture.Screenshot.frc;
+
 public class StringFrag {
     Font font;
     int maxLen;
@@ -22,14 +24,11 @@ public class StringFrag {
         List<String>ans=new ArrayList<>();
         if(source.length()==0)source=" ";
         int lastRul=0,maxVal=0;
-        BufferedImage img=new BufferedImage(100,100,2);
-        Graphics2D graphic=GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(img);
-        FontRenderContext fontRenderContext=graphic.getFontRenderContext();
-        TextLayout textLayout=new TextLayout(source,font,fontRenderContext);
+        TextLayout textLayout=new TextLayout(source,font, frc);
         double scope=font.getSize()/textLayout.getBounds().getHeight();
         for(int i=0;i<source.length();i++)
         {
-            textLayout=new TextLayout(source.substring(lastRul,i+1),font,fontRenderContext);
+            textLayout=new TextLayout(source.substring(lastRul,i+1),font,frc);
             Rectangle2D rectangle2D=textLayout.getBounds();
             if((int)(rectangle2D.getWidth()*scope)>maxLen)
             {
@@ -41,7 +40,7 @@ public class StringFrag {
                 maxVal=Math.max(maxVal,(int)(rectangle2D.getWidth()*scope));
             }
         }
-        textLayout=new TextLayout(source.substring(lastRul),font,fontRenderContext);
+        textLayout=new TextLayout(source.substring(lastRul),font,frc);
         Rectangle2D rectangle2D=textLayout.getBounds();
         maxVal=Math.max(maxVal,(int)(rectangle2D.getWidth()*scope));
         ans.add(source.substring(lastRul));

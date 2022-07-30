@@ -1,2 +1,2 @@
 Manifest-Version: 8.0
-Main-Class: Main
+Main-Class: Main.Main
