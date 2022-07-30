@@ -23,6 +23,7 @@ import java.util.Map;
 
 import static Main.Main.bot;
 import static Main.Main.token;
+import static Picture.StringFrag.stringFrag;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class Screenshot
@@ -34,32 +35,32 @@ public class Screenshot
     static int padding=24;
     static int msgSplit=4;
     static int height;
+    public static int maxLen;
     static BufferedImage xImg;
     static Graphics2D xG2D;
-    static FontRenderContext frc;
+    public static FontRenderContext frc;
+    public static Font font;
     public static BufferedImage screenshot(List<Message> msg, long target) throws Exception, FontFormatException {
-        //Font font=Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\Vicky\\Desktop\\bot-jar\\cfg\\DroidSansFallback.ttf")).deriveFont(Font.PLAIN,fontHeight);
-        //Font font=Font.createFont(Font.TYPE1_FONT, new File("C:\\Users\\Vicky\\Desktop\\bot-jar\\cfg\\simsun.ttc")).deriveFont(Font.PLAIN,fontHeight);
-        Font font=new Font("SimSun",Font.PLAIN,fontHeight);
         height=msgSplit;
         List<String>[] frag=new List[msg.size()];
         int[] msgWidth=new int[msg.size()];
         Map<Long,String> avatar=new HashMap<>();
         int maxWidth=0;
-        StringFrag stringFrag=new StringFrag(font,width-avatarSize-padding*5);
+        maxLen=width-avatarSize-padding*5;
         long lastUser=0L,curID;
         String name;
         TextLayout textLayout;
         xImg=new BufferedImage(100,100,2);
         xG2D=GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(xImg);
         frc=xG2D.getFontRenderContext();
+        font=xG2D.getFont().deriveFont((float)fontHeight);
         List<List<PhotoSize>> userPhotos;
         GetFile getFile;
         PhotoSize ps;
         for(int i=0;i<msg.size();i++)
         {
             curID=msg.get(i).getFrom().getId();
-            ListAndVal tmp=stringFrag.stringFrag(msg.get(i).getText());
+            ListAndVal tmp=stringFrag(msg.get(i).getText());
             frag[i]=tmp.list;
             msgWidth[i]=tmp.val;
             userPhotos=bot.execute(new GetUserProfilePhotos(curID)).getPhotos();

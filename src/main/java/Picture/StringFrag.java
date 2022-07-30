@@ -6,17 +6,10 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import static Picture.Screenshot.frc;
+import static Picture.Screenshot.*;
 
 public class StringFrag {
-    Font font;
-    int maxLen;
-    public StringFrag(Font font,int maxLen)
-    {
-        this.font=font;
-        this.maxLen=maxLen;
-    }
-    ListAndVal stringFragPerLine(String source)
+    static ListAndVal stringFragPerLine(String source)
     {
         List<String>ans=new ArrayList<>();
         if(source.length()==0)source=" ";
@@ -43,7 +36,7 @@ public class StringFrag {
         ans.add(source.substring(lastRul));
         return new ListAndVal(ans,maxVal);
     }
-    public ListAndVal stringFrag(String source)
+    public static ListAndVal stringFrag(String source)
     {
         List<String>ans=new ArrayList<>();
         ListAndVal tmp;
