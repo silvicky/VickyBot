@@ -64,7 +64,7 @@ public class Screenshot
             frag[i]=tmp.list;
             msgWidth[i]=tmp.val;
             userPhotos=bot.execute(new GetUserProfilePhotos(curID)).getPhotos();
-            ps=userPhotos.get(userPhotos.size()-1).get(0);
+            ps=userPhotos.get(0).get(0);
             avatar.put(curID, ps.getFileId());
             if(curID!=lastUser)
             {
