@@ -14,19 +14,15 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static Main.Main.bot;
 import static Main.Main.token;
-import static Picture.CompressImg.compressImg;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class Screenshot
