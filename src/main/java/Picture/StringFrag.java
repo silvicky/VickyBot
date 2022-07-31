@@ -24,6 +24,7 @@ public class StringFrag {
             Rectangle2D rectangle2D=textLayout.getBounds();
             if((int)(rectangle2D.getWidth()*scope)>maxLen)
             {
+                maxVal=maxLen;
                 ans.add(source.substring(lastRul,i));
                 lastRul=i;
             }

@@ -1,6 +1,5 @@
 package Picture;
 
-import Main.Main;
 import Utility.CustomPair;
 import com.hellokaton.webp.WebpIO;
 import org.slf4j.Logger;
@@ -10,7 +9,6 @@ import org.telegram.telegrambots.meta.api.methods.GetUserProfilePhotos;
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.imageio.ImageIO;
@@ -23,7 +21,6 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -120,7 +117,7 @@ public class Screenshot
         TextLayout textLayout;
         xG2D=GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(new BufferedImage(100,100,2));
         frc=xG2D.getFontRenderContext();
-        font=xG2D.getFont().deriveFont((float)fontHeight);
+        font=Font.createFont(Font.TRUETYPE_FONT,new File("./cfg/NotoSansSC-Regular.otf")).deriveFont((float)fontHeight);
         for(int i=0;i<msg.size();i++)
         {
             curID=msg.get(i).getFrom().getId();
@@ -182,7 +179,7 @@ public class Screenshot
         TextLayout textLayout;
         xG2D=GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(new BufferedImage(100,100,2));
         frc=xG2D.getFontRenderContext();
-        font=xG2D.getFont().deriveFont((float)fontHeight);
+        font=Font.createFont(Font.TRUETYPE_FONT,new File("./cfg/NotoSansSC-Regular.otf")).deriveFont((float)fontHeight);
         for(int i=0;i<msg.size();i++)
         {
             curID=msg.get(i).user.userID;
