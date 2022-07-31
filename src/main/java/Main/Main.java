@@ -1,10 +1,13 @@
 package Main;
 
 import Cmd.CmdIO;
+import Cmd.Kernel32;
 import Utility.DateUtil;
 import Utility.GithubUtil;
 import Utility.JiraUtil;
 import Utility.SayUtil;
+import com.sun.jna.Native;
+import com.sun.jna.Platform;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +19,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
+import static Cmd.CmdIO.isCMD;
 import static Cmd.CmdIO.readFromConsole;
 import static LispStyle.LispStyle.deBlank;
 
@@ -23,7 +27,7 @@ public class Main {
 
     public static String token;
     static final String infoPathname="./cfg/BotInfo.txt";
-    static final String cfgPathname="./cfg/reload4j.properties";
+    static final String cfgPathname="./cfg/log4j.properties";
     public static String name;
     public static long creatorId;
     public static long startTime;
@@ -33,19 +37,12 @@ public class Main {
     static Logger logger= LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
-        try
-        {
-            isCMD= CmdIO.isCMD();
-        }
-        catch(Exception e)
-        {
-            logger.error(e.toString());
-            isCMD=false;
-        }
+        PropertyConfigurator.configure(cfgPathname);
+        if(Platform.isWindows())isCMD=isCMD();
+        else isCMD=false;
         File cacheFolder=new File("./cache/");
         if(!cacheFolder.exists())cacheFolder.mkdir();
         startTime= Instant.now().getEpochSecond();
-        PropertyConfigurator.configure(cfgPathname);
         TelegramBotsApi botsApi=new TelegramBotsApi(DefaultBotSession.class);
         try {
             BufferedReader in;
