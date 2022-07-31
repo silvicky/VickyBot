@@ -25,14 +25,26 @@ public class StringExp {
             }
             else
             {
-                tmp=Integer.parseInt(s.substring(0,s.indexOf("[")));
-                unit=parsePkg(s.substring(s.indexOf("[")+1,obtainPkg(s,s.indexOf("["))));
-                for(int i=0;i<tmp;i++)
-                {
-                    ans+=unit;
-                    if(ans.length()>maxLen)throw new ExpressionErr("Answer is too long!");
+                try {
+                    tmp = Integer.parseInt(s.substring(0, s.indexOf("[")));
+                    unit=parsePkg(s.substring(s.indexOf("[")+1,obtainPkg(s,s.indexOf("["))));
+                    for(int i=0;i<tmp;i++)
+                    {
+                        ans+=unit;
+                        if(ans.length()>maxLen)throw new ExpressionErr("Answer is too long!");
+                    }
+                    s=s.substring(obtainPkg(s,s.indexOf("["))+1);
                 }
-                s=s.substring(obtainPkg(s,s.indexOf("["))+1);
+                catch(NumberFormatException | StringIndexOutOfBoundsException e)
+                {
+                    int rul=0;
+                    for(;rul<s.length();rul++)
+                    {
+                        if(!(s.charAt(rul)<='9'&&s.charAt(rul)>='0'))break;
+                    }
+                    ans+=s.substring(0,rul);
+                    s=s.substring(rul);
+                }
             }
         }
         if(ans.length()>maxLen)throw new ExpressionErr("Answer is too long!");
