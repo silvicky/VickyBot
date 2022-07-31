@@ -1,6 +1,7 @@
 package Picture;
 
 import Main.Main;
+import Utility.CustomPair;
 import com.hellokaton.webp.WebpIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,29 @@ public class Screenshot
     public static FontRenderContext frc;
     public static Font font;
     static Logger logger= LoggerFactory.getLogger(Screenshot.class);
-    public static BufferedImage screenshot(List<Message> msg, long target) throws Exception {
+    public static void sendImageAsSticker(BufferedImage img,long target) throws Exception {
+        InputFile inputFile=new InputFile();
+        int ran=(int)(random()*1000000000);
+        File tmp=new File("./cache/"+ran+".png");
+        File tmpW=new File("./cache/"+ran+".webp");
+        ImageIO.write(img,"png",tmp);
+        WebpIO webpIO=new WebpIO();
+        webpIO.toWEBP(tmp,tmpW);
+        SendSticker sendSticker= SendSticker.builder().sticker(inputFile).chatId(Long.toString(target)).build();
+        inputFile.setMedia(tmp,Long.toString(target));
+        try
+        {
+            bot.execute(sendSticker);
+            logger.info("Sent screenshot to: "+target);
+        }
+        catch(Exception e)
+        {
+            logger.error(e.toString());
+        }
+        tmp.delete();
+        tmpW.delete();
+    }
+    public static void screenshot(List<Message> msg, long target) throws Exception {
         int width;
         int height;
         height=msgSplit;
@@ -62,18 +85,14 @@ public class Screenshot
         xG2D=GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(xImg);
         frc=xG2D.getFontRenderContext();
         font=xG2D.getFont().deriveFont((float)fontHeight);
-        List<List<PhotoSize>> userPhotos;
         GetFile getFile;
-        PhotoSize ps;
         for(int i=0;i<msg.size();i++)
         {
             curID=msg.get(i).getFrom().getId();
-            ListAndVal tmp=stringFrag(msg.get(i).getText());
-            frag[i]=tmp.list;
-            msgWidth[i]=tmp.val;
-            userPhotos=bot.execute(new GetUserProfilePhotos(curID)).getPhotos();
-            ps=userPhotos.get(0).get(0);
-            avatar.put(curID, ps.getFileId());
+            CustomPair<List<String>,Integer> tmp=stringFrag(msg.get(i).getText());
+            frag[i]=tmp.val1;
+            msgWidth[i]=tmp.val2;
+            avatar.put(curID, bot.execute(new GetUserProfilePhotos(curID,0,1)).getPhotos().get(0).get(0).getFileId());
             if(curID!=lastUser)
             {
                 name=msg.get(i).getFrom().getFirstName();
@@ -84,7 +103,7 @@ public class Screenshot
                 msgWidth[i]=Math.max(msgWidth[i],(int)(rectangle2D.getWidth()*scope));
                 if(!new File("./cache/"+avatar.get(curID)).exists())
                 {
-                    getFile=new GetFile(ps.getFileId());
+                    getFile=new GetFile(avatar.get(curID));
                     Files.copy(new URL("https://api.telegram.org/file/bot"+token+"/"+bot.execute(getFile).getFilePath()).openStream(),Paths.get("./cache/"+avatar.get(curID)),REPLACE_EXISTING);
                 }
                 height+=fontHeight+split;
@@ -137,26 +156,6 @@ public class Screenshot
             }
             cumuH+=curH+msgSplit;
         }
-        InputFile inputFile=new InputFile();
-        int ran=(int)(random()*1000000000);
-        File tmp=new File("./cache/"+ran+".png");
-        File tmpW=new File("./cache/"+ran+".webp");
-        ImageIO.write(image,"png",tmp);
-        WebpIO webpIO=new WebpIO();
-        webpIO.toWEBP(tmp,tmpW);
-        SendSticker sendSticker= SendSticker.builder().sticker(inputFile).chatId(Long.toString(target)).build();
-        inputFile.setMedia(tmp,Long.toString(target));
-        try
-        {
-            bot.execute(sendSticker);
-            logger.info("Sent screenshot to: "+target);
-        }
-        catch(Exception e)
-        {
-            logger.error(e.toString());
-        }
-        tmp.delete();
-        tmpW.delete();
-        return image;
+        sendImageAsSticker(image,target);
     }
 }
