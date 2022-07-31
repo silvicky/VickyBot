@@ -1,7 +1,13 @@
 package Picture;
 
+import Main.Main;
+import com.hellokaton.webp.WebpIO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.GetUserProfilePhotos;
+import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 
@@ -24,6 +30,7 @@ import java.util.Map;
 import static Main.Main.bot;
 import static Main.Main.token;
 import static Picture.StringFrag.stringFrag;
+import static java.lang.Math.random;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class Screenshot
@@ -39,7 +46,8 @@ public class Screenshot
     static Graphics2D xG2D;
     public static FontRenderContext frc;
     public static Font font;
-    public static BufferedImage screenshot(List<Message> msg, long target) throws Exception, FontFormatException {
+    static Logger logger= LoggerFactory.getLogger(Screenshot.class);
+    public static BufferedImage screenshot(List<Message> msg, long target) throws Exception {
         int width;
         int height;
         height=msgSplit;
@@ -129,6 +137,26 @@ public class Screenshot
             }
             cumuH+=curH+msgSplit;
         }
+        InputFile inputFile=new InputFile();
+        int ran=(int)(random()*1000000000);
+        File tmp=new File("./cache/"+ran+".png");
+        File tmpW=new File("./cache/"+ran+".webp");
+        ImageIO.write(image,"png",tmp);
+        WebpIO webpIO=new WebpIO();
+        webpIO.toWEBP(tmp,tmpW);
+        SendSticker sendSticker= SendSticker.builder().sticker(inputFile).chatId(Long.toString(target)).build();
+        inputFile.setMedia(tmp,Long.toString(target));
+        try
+        {
+            bot.execute(sendSticker);
+            logger.info("Sent screenshot to: "+target);
+        }
+        catch(Exception e)
+        {
+            logger.error(e.toString());
+        }
+        tmp.delete();
+        tmpW.delete();
         return image;
     }
 }

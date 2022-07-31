@@ -383,29 +383,9 @@ public class VickyBotA extends AbilityBot {
                                 List<Message> ssTmpT=new ArrayList<>();
                                 isSSOccupied[cur]=false;
                                 ssMap.remove(pair);
+                                ssTmpT.add(reply);
                                 try {
-                                    ssTmpT.add(reply);
-                                    InputFile inputFile=new InputFile();
-                                    int ran=(int)(random()*1000000000);
-                                    File tmp=new File("./cache/"+ran+".png");
-                                    File tmpW=new File("./cache/"+ran+".webp");
-                                    ImageIO.write(Screenshot.screenshot(ssTmpT,ctx.chatId()),"png",tmp);
-                                    WebpIO webpIO=new WebpIO();
-                                    webpIO.toWEBP(tmp,tmpW);
-                                    SendSticker sendSticker= SendSticker.builder().sticker(inputFile).chatId(ctx.chatId().toString()).build();
-                                    inputFile.setMedia(tmp,ctx.chatId().toString());
-                                    try
-                                    {
-                                        this.execute(sendSticker);
-                                        logger.info("Sent screenshot to: "+ctx.chatId());
-                                        logger.info("By: "+ctx.update().getMessage().getFrom().getId());
-                                    }
-                                    catch(Exception e)
-                                    {
-                                        logger.error(e.toString());
-                                    }
-                                    tmp.delete();
-                                    tmpW.delete();
+                                    Screenshot.screenshot(ssTmpT,ctx.chatId());
                                 } catch (Exception e) {
                                     silent.send("ERR: "+e,ctx.chatId());
                                     logger.error(e.toString());
@@ -426,27 +406,7 @@ public class VickyBotA extends AbilityBot {
                             isSSOccupied[cur]=false;
                             ssMap.remove(pair);
                             try {
-                                InputFile inputFile=new InputFile();
-                                int ran=(int)(random()*1000000000);
-                                File tmp=new File("./cache/"+ran+".png");
-                                File tmpW=new File("./cache/"+ran+".webp");
-                                ImageIO.write(Screenshot.screenshot(ssTmp[cur],ctx.chatId()),"png",tmp);
-                                WebpIO webpIO=new WebpIO();
-                                webpIO.toWEBP(tmp,tmpW);
-                                SendSticker sendSticker= SendSticker.builder().sticker(inputFile).chatId(ctx.chatId().toString()).build();
-                                inputFile.setMedia(tmp,ctx.chatId().toString());
-                                try
-                                {
-                                    this.execute(sendSticker);
-                                    logger.info("Sent screenshot to: "+ctx.chatId());
-                                    logger.info("By: "+ctx.update().getMessage().getFrom().getId());
-                                }
-                                catch(Exception e)
-                                {
-                                    logger.error(e.toString());
-                                }
-                                tmp.delete();
-                                tmpW.delete();
+                                Screenshot.screenshot(ssTmp[cur],ctx.chatId());
                             } catch (Exception e) {
                                 silent.send("ERR: "+e,ctx.chatId());
                                 logger.error(e.toString());
