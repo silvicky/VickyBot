@@ -1,4 +1,4 @@
-package Picture;
+package MessageParsing;
 
 public class FakeUser {
     public String name;

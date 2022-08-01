@@ -2,26 +2,16 @@ package Main;
 
 import Eliza.ElizaMain;
 import Picture.Screenshot;
-import Utility.CustomPair;
-import com.hellokaton.webp.WebpIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.RestrictChatMember;
-import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
 import org.telegram.telegrambots.meta.api.objects.ChatPermissions;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.io.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;

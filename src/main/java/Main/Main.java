@@ -1,14 +1,11 @@
 package Main;
 
-import Cmd.CmdIO;
-import Cmd.Kernel32;
-import Picture.FakeMsg;
-import Picture.FakeUser;
+import MessageParsing.FakeMsg;
+import MessageParsing.FakeUser;
 import Utility.DateUtil;
 import Utility.GithubUtil;
 import Utility.JiraUtil;
 import Utility.SayUtil;
-import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
@@ -18,7 +15,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -115,7 +111,7 @@ public class Main {
                         cur=cur.substring(4);
                         long userID=Long.parseLong(cur.substring(0,cur.indexOf(" ")));
                         cur=cur.substring(cur.indexOf(" ")+1);
-                        FakeMsg fakeMsg=new FakeMsg(fakeUserMap.get(userID));
+                        FakeMsg fakeMsg=new FakeMsg(fakeUserMap.get(userID),FakeMsg.TEXT);
                         fakeMsg.setText(cur);
                         fakeMsgList.add(fakeMsg);
                     }
