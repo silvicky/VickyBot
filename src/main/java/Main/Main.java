@@ -25,6 +25,7 @@ import static Cmd.CmdIO.isCMD;
 import static Cmd.CmdIO.readFromConsole;
 import static LispStyle.LispStyle.deBlank;
 import static Picture.Screenshot.fakeSS;
+import static String.CommandParser.parseStr;
 
 public class Main {
 
@@ -77,49 +78,40 @@ public class Main {
                 if (cur.startsWith("/")) cur = cur.substring(1);
                 if (cur.endsWith("\n")) cur = cur.substring(0,cur.length()-1);
                 if (cur.endsWith("\r")) cur = cur.substring(0,cur.length()-1);
-                cur = cur.replace("\\n", "\n");
-                cur = cur.replace("\\t", "\t");
-                cur = deBlank(cur);
-                if (cur.startsWith("send")) {
-                    SendMessage sendMessage = new SendMessage();
-                    cur = cur.substring(5);
-                    long cid = Long.parseLong(cur.substring(0, cur.indexOf(" ")));
-                    cur = cur.substring(cur.indexOf(" ") + 1);
-                    sendMessage.setText(cur);
-                    sendMessage.setChatId(Long.toString(cid));
-                    bot.execute(sendMessage);
-                }
-                 else if (cur.startsWith("fake")) {
-                    cur = cur.substring(5);
-                    if(cur.startsWith("init"))
-                    {
-                        fakeMsgList.clear();
-                    }
-                    else if(cur.startsWith("user"))
-                    {
-                        cur=cur.substring(5);
-                        long userID=Long.parseLong(cur.substring(0,cur.indexOf(" ")));
-                        cur=cur.substring(cur.indexOf(" ")+2);
-                        String userName=cur.substring(0,cur.indexOf("\""));
-                        cur=cur.substring(cur.indexOf("\"")+3);
-                        String avatar=cur.substring(0,cur.indexOf("\""));
-                        FakeUser fakeUser=new FakeUser(userID,userName,avatar);
-                        fakeUserMap.put(userID,fakeUser);
-                    }
-                    else if(cur.startsWith("add"))
-                    {
-                        cur=cur.substring(4);
-                        long userID=Long.parseLong(cur.substring(0,cur.indexOf(" ")));
-                        cur=cur.substring(cur.indexOf(" ")+1);
-                        FakeMsg fakeMsg=new FakeMsg(fakeUserMap.get(userID),FakeMsg.TEXT);
-                        fakeMsg.setText(cur);
-                        fakeMsgList.add(fakeMsg);
-                    }
-                    else if(cur.startsWith("send"))
-                    {
-                        cur=cur.substring(5);
-                        fakeSS(fakeMsgList,Long.parseLong(cur));
-                    }
+                List<String> commands=parseStr(cur);
+                switch(commands.get(0))
+                {
+                    case "send":
+                        SendMessage sendMessage=new SendMessage(commands.get(1),commands.get(2));
+                        bot.execute(sendMessage);
+                        break;
+                    case "fake":
+                        long userID;
+                        switch(commands.get(1))
+                        {
+                            case "init":
+                                fakeMsgList.clear();
+                                break;
+                            case "user":
+                                userID=Long.parseLong(commands.get(2));
+                                FakeUser fakeUser=new FakeUser(userID, commands.get(3), commands.get(4));
+                                fakeUserMap.put(userID,fakeUser);
+                                break;
+                            case "add":
+                                userID=Long.parseLong(commands.get(2));
+                                FakeMsg fakeMsg=new FakeMsg(fakeUserMap.get(userID),FakeMsg.TEXT);
+                                fakeMsg.setText(commands.get(3));
+                                fakeMsgList.add(fakeMsg);
+                                break;
+                            case "send":
+                                fakeSS(fakeMsgList,Long.parseLong(commands.get(2)));
+                                break;
+                            default:
+                                logger.error("Unknown command!");
+                        }
+                        break;
+                    default:
+                        logger.error("Unknown command!");
                 }
             }
             catch(Exception e)
