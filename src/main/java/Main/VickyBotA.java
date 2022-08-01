@@ -8,6 +8,7 @@ import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.RestrictChatMember;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.ChatPermissions;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
@@ -211,12 +212,18 @@ public class VickyBotA extends AbilityBot {
                 .locality(ALL)
                 .privacy(PUBLIC)
                 .action(ctx->{
+                    DeleteMessage deleteMessage=new DeleteMessage();
+                    deleteMessage.setMessageId(ctx.update().getMessage().getMessageId());
+                    deleteMessage.setChatId(String.valueOf(ctx.chatId()));
                     if(ctx.arguments().length==0)
                     {
-                        silent.send("Example: /exp 3[a2[b]]",ctx.chatId());
+                        silent.send(
+                                "Example: /exp 3[a2[b]]\n" +
+                                "Tips: Commands other than this will be deleted.",ctx.chatId());
                     }
                     else
                     {
+                        silent.execute(deleteMessage);
                         String msg=ctx.update().getMessage().getText();
                         try
                         {
@@ -341,16 +348,21 @@ public class VickyBotA extends AbilityBot {
                 .action(ctx->
                 {
                     Message reply=ctx.update().getMessage().getReplyToMessage();
+                    DeleteMessage deleteMessage=new DeleteMessage();
+                    deleteMessage.setMessageId(ctx.update().getMessage().getMessageId());
+                    deleteMessage.setChatId(String.valueOf(ctx.chatId()));
                     if(reply==null)
                     {
                         silent.send(
                                 "Reply to something to use it.\n" +
                                         "/ss - Capture this only.\n" +
                                         "/ss begin - Capture from this. Use /ss after this.\n" +
-                                        "/ss end - Capture up to this.",ctx.chatId());
+                                        "/ss end - Capture up to this.\n" +
+                                        "Tips: Commands other than this will be deleted.",ctx.chatId());
                     }
                     else
                     {
+                        silent.execute(deleteMessage);
                         long pair=ctx.chatId()*sth+ctx.update().getMessage().getFrom().getId();
                         if(!ssMap.containsKey(pair))
                         {
