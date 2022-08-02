@@ -35,14 +35,14 @@ public class Download {
             Files.copy(new URL("https://api.telegram.org/file/bot"+token+"/"+bot.execute(getFile).getFilePath()).openStream(), Paths.get("./cache/"+picID),REPLACE_EXISTING);
         }
     }
-    public static void obtainSticker(String picID) throws IOException, TelegramApiException {
+    public static void obtainSticker(String picID,String place) throws IOException, TelegramApiException {
         if(!new File("./cache/"+picID).exists())
         {
             GetFile getFile;
             getFile=new GetFile(picID);
-            Files.copy(new URL("https://api.telegram.org/file/bot"+token+"/"+bot.execute(getFile).getFilePath()).openStream(), Paths.get("./cache/"+picID+".webp"),REPLACE_EXISTING);
-            File picW=new File("./cache/"+picID+".webp");
-            File picP=new File("./cache/"+picID);
+            Files.copy(new URL("https://api.telegram.org/file/bot"+token+"/"+bot.execute(getFile).getFilePath()).openStream(), Paths.get(place+picID+".webp"),REPLACE_EXISTING);
+            File picW=new File(place+picID+".webp");
+            File picP=new File(place+picID);
             WebpIO webpIO=new WebpIO();
             webpIO.toNormalImage(picW,picP);
             try
@@ -52,7 +52,7 @@ public class Download {
             }
             catch(Exception e)
             {
-                picW.renameTo(new File("./cache/"+picID));
+                picW.renameTo(new File(place+picID));
             }
         }
     }

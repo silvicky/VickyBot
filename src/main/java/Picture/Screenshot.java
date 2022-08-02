@@ -17,6 +17,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class Screenshot
         WebpIO webpIO=new WebpIO();
         webpIO.toWEBP(tmp,tmpW);
         SendSticker sendSticker= SendSticker.builder().sticker(inputFile).chatId(Long.toString(target)).build();
-        inputFile.setMedia(tmpW,Long.toString(target));
+        inputFile.setMedia(tmpW, String.valueOf(ran));
         try
         {
             bot.execute(sendSticker);
@@ -109,6 +110,13 @@ public class Screenshot
         List<FakeMsg> ans=new ArrayList<>();
         for(Message i:msg)ans.addAll(FakeMsg.parse(i));
         fakeSS(ans,target);
+    }
+    public static BufferedImage to512(BufferedImage img)
+    {
+        BufferedImage ans=new BufferedImage(512,img.getHeight(),2);
+        Graphics2D graphics2D=GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(ans);
+        graphics2D.drawImage(img,new AffineTransformOp(new AffineTransform(),AffineTransformOp.TYPE_NEAREST_NEIGHBOR),(512-img.getWidth())/2,0);
+        return ans;
     }
     public static void fakeSS(List<FakeMsg> msg, long target) throws Exception {
         int width=0;

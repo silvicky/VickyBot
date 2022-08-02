@@ -6,12 +6,22 @@ import Utility.DateUtil;
 import Utility.GithubUtil;
 import Utility.JiraUtil;
 import Utility.SayUtil;
+import com.hellokaton.webp.WebpIO;
 import com.sun.jna.Platform;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.SetChatStickerSet;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.stickers.AddStickerToSet;
+import org.telegram.telegrambots.meta.api.methods.stickers.CreateNewStickerSet;
+import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
+import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import javax.imageio.ImageIO;
@@ -26,8 +36,11 @@ import java.util.Map;
 import static Cmd.CmdIO.isCMD;
 import static Cmd.CmdIO.readFromConsole;
 import static LispStyle.LispStyle.deBlank;
+import static MessageParsing.Download.obtainSticker;
 import static Picture.Screenshot.fakeSS;
+import static Picture.Screenshot.to512;
 import static String.CommandParser.parseStr;
+import static java.lang.Math.random;
 
 public class Main {
 
@@ -49,6 +62,8 @@ public class Main {
         else isCMD=false;
         File cacheFolder=new File("./cache/");
         if(!cacheFolder.exists())cacheFolder.mkdir();
+        File censorFolder=new File("./censor/");
+        if(!censorFolder.exists())censorFolder.mkdir();
         startTime= Instant.now().getEpochSecond();
         TelegramBotsApi botsApi=new TelegramBotsApi(DefaultBotSession.class);
         try {
@@ -127,6 +142,94 @@ public class Main {
                                 logger.error("Unknown command!");
                         }
                         break;
+                    case "sticker":
+                        InputFile inputFile;
+                        int ran=(int)(random()*1000000000);
+                        File file512,fileNorm;
+                        WebpIO webpIO;
+                        GetStickerSet getStickerSet;
+                        switch(commands.get(1))
+                        {
+                            case "new":
+                                getStickerSet=new GetStickerSet(commands.get(2)+"_by_"+name);
+                                try
+                                {
+                                    bot.execute(getStickerSet);
+                                    throw new Exception("This sticker set already exists!");
+                                }
+                                catch(TelegramApiException ignored){}
+                                CreateNewStickerSet createNewStickerSet=new CreateNewStickerSet();
+                                createNewStickerSet.setUserId(creatorId);
+                                createNewStickerSet.setName(commands.get(2)+"_by_"+name);
+                                createNewStickerSet.setTitle(commands.get(3));
+                                createNewStickerSet.setEmojis(commands.get(4));
+                                createNewStickerSet.setContainsMasks(false);
+                                file512 = new File(commands.get(5)+"sec");
+                                if(commands.get(6)=="webp")
+                                {
+                                    webpIO=new WebpIO();
+                                    fileNorm=new File(commands.get(5)+"norm");
+                                    webpIO.toNormalImage(new File(commands.get(5)),fileNorm);
+                                    ImageIO.write(to512(ImageIO.read(fileNorm)), "png", file512);
+                                }
+                                else
+                                {
+                                    ImageIO.write(to512(ImageIO.read(new File(commands.get(5)))), "png", file512);
+                                }
+                                inputFile = new InputFile(file512, String.valueOf(ran));
+                                createNewStickerSet.setPngSticker(inputFile);
+                                bot.execute(createNewStickerSet);
+                                break;
+                            case "add":
+                                AddStickerToSet addStickerToSet=new AddStickerToSet();
+                                addStickerToSet.setUserId(creatorId);
+                                addStickerToSet.setName(commands.get(2)+"_by_"+name);
+                                addStickerToSet.setEmojis(commands.get(3));
+                                file512=new File(commands.get(4)+"sec");
+                                if(commands.get(5)=="webp")
+                                {
+                                    webpIO=new WebpIO();
+                                    fileNorm=new File(commands.get(4)+"norm");
+                                    webpIO.toNormalImage(new File(commands.get(4)),fileNorm);
+                                    ImageIO.write(to512(ImageIO.read(fileNorm)), "png", file512);
+                                }
+                                else
+                                {
+                                    ImageIO.write(to512(ImageIO.read(new File(commands.get(4)))), "png", file512);
+                                }
+                                inputFile=new InputFile(file512, String.valueOf(ran));
+                                addStickerToSet.setPngSticker(inputFile);
+                                bot.execute(addStickerToSet);
+                                file512.delete();
+                                break;
+                            case "set":
+                                SetChatStickerSet setChatStickerSet=new SetChatStickerSet();
+                                setChatStickerSet.setChatId(commands.get(2));
+                                setChatStickerSet.setStickerSetName(commands.get(3)+"_by_"+name);
+                                bot.execute(setChatStickerSet);
+                                break;
+                            case "del":
+                                getStickerSet=new GetStickerSet(commands.get(2)+"_by_"+name);
+                                List<Sticker> stickers=bot.execute(getStickerSet).getStickers();
+                                for(int i=0;i<stickers.size();i++)
+                                {
+                                    obtainSticker(stickers.get(i).getFileId(),"./censor/");
+                                }
+                                System.out.println("Well, check the censor folder and type ALL IDs that you wanna abandon.");
+                                String censoredId=readFromConsole();
+                                if (censoredId.endsWith("\n")) censoredId = censoredId.substring(0,censoredId.length()-1);
+                                if (censoredId.endsWith("\r")) censoredId = censoredId.substring(0,censoredId.length()-1);
+                                List<String> censoredIds=parseStr(censoredId);
+                                for(String s:censoredIds)
+                                {
+                                    File cf=new File("./censor/"+s);
+                                    cf.delete();
+                                }
+                                System.out.println("Done.");
+                                break;
+                            default:
+                                logger.error("Unknown command!");
+                        }
                     default:
                         logger.error("Unknown command!");
                 }

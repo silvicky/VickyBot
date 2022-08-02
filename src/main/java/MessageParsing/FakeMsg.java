@@ -62,7 +62,7 @@ public class FakeMsg {
                 if (!msg.getSticker().getIsAnimated()) {
                     FakeMsg fakeMsg = new FakeMsg(fakeUser, PICTURE);
                     String pic = msg.getSticker().getFileId();
-                    obtainSticker(pic);
+                    obtainSticker(pic,"./cache/");
                     fakeMsg.setPicture("./cache/" + pic, msg.getSticker().getHeight(), msg.getSticker().getWidth());
                     ans.add(fakeMsg);
                 } else {
