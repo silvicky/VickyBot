@@ -14,6 +14,8 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -98,10 +100,25 @@ public class Main {
                                 fakeUserMap.put(userID,fakeUser);
                                 break;
                             case "add":
-                                userID=Long.parseLong(commands.get(2));
-                                FakeMsg fakeMsg=new FakeMsg(fakeUserMap.get(userID),FakeMsg.TEXT);
-                                fakeMsg.setText(commands.get(3));
-                                fakeMsgList.add(fakeMsg);
+                                FakeMsg fakeMsg;
+                                switch(commands.get(2))
+                                {
+                                    case "text":
+                                        userID = Long.parseLong(commands.get(3));
+                                        fakeMsg = new FakeMsg(fakeUserMap.get(userID), FakeMsg.TEXT);
+                                        fakeMsg.setText(commands.get(4));
+                                        fakeMsgList.add(fakeMsg);
+                                        break;
+                                    case "pic":
+                                        userID = Long.parseLong(commands.get(3));
+                                        fakeMsg = new FakeMsg(fakeUserMap.get(userID), FakeMsg.PICTURE);
+                                        BufferedImage tmp = ImageIO.read(new File(commands.get(4)));
+                                        fakeMsg.setPicture(commands.get(4), tmp.getHeight(), tmp.getWidth());
+                                        fakeMsgList.add(fakeMsg);
+                                        break;
+                                    default:
+                                        logger.error("Unknown command!");
+                                }
                                 break;
                             case "send":
                                 fakeSS(fakeMsgList,Long.parseLong(commands.get(2)));
