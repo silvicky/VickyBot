@@ -6,6 +6,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Date;
 import java.util.TimeZone;
@@ -29,7 +32,7 @@ public class DateUtil {
         String tmp="";
         try {
             BufferedReader in;
-            in = new BufferedReader(new FileReader(sayTextName));
+            in = Files.newBufferedReader(Paths.get(sayTextName), StandardCharsets.UTF_8);
             curLine++;
             tmp=in.readLine();
             timeCnt = Integer.parseInt(tmp);
