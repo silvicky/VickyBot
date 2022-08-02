@@ -212,8 +212,10 @@ public class Main {
                             case "del":
                                 getStickerSet=new GetStickerSet(commands.get(2)+"_by_"+name);
                                 List<Sticker> stickers=bot.execute(getStickerSet).getStickers();
+                                List<String> stickerIds=new ArrayList<>();
                                 for(int i=0;i<stickers.size();i++)
                                 {
+                                    stickerIds.add(stickers.get(i).getFileId());
                                     obtainSticker(stickers.get(i).getFileId(),"./censor/");
                                 }
                                 System.out.println("Well, check the censor folder and type ALL IDs that you wanna abandon.");
@@ -225,8 +227,11 @@ public class Main {
                                 {
                                     DeleteStickerFromSet deleteStickerFromSet=new DeleteStickerFromSet(s);
                                     bot.execute(deleteStickerFromSet);
-                                    File cf=new File("./censor/"+s);
-                                    cf.delete();
+                                }
+                                for(String i:censoredIds)
+                                {
+                                    File f=new File("./censor/"+i);
+                                    f.delete();
                                 }
                                 System.out.println("Done.");
                                 break;
