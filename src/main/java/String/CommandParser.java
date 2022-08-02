@@ -4,48 +4,84 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandParser {
-    static int nextQuote(String s,int ind)
-    {
-        int ans=s.indexOf('\"',ind);
-        while(ans!=-1)
-        {
-            if(ans==0||s.charAt(ans-1)!='\\')return ans;
-            ans=s.indexOf('\"',ans+1);
-        }
-        return -1;
-    }
-    static String finalProcess(String s)
-    {
-        return s.replace("\\\"","\"")
-                .replace("\\n","\n")
-                .replace("\\t","\t");
-    }
     public static List<String> parseStr(String s) throws ExpressionErr {
         List<String> ans=new ArrayList<>();
-        int rul=0,tmp;
-        while(rul<s.length())
+        String cur="";
+        boolean isQuote=false;
+        for(int i=0;i<s.length();i++)
         {
-            if(s.charAt(rul)=='\"')
+            if(s.charAt(i)=='\"')
             {
-                tmp=nextQuote(s,rul+1);
-                if(tmp+1<s.length()&&s.charAt(tmp+1)!=' ')throw new ExpressionErr("Wrong command format at index "+rul);
-                ans.add(finalProcess(s.substring(rul+1,tmp)));
-                rul=tmp+2;
+                if(isQuote)
+                {
+                    ans.add(cur);
+                    cur="";
+                    isQuote=false;
+                    if(i+1<s.length()&&s.charAt(i+1)!=' ')throw new ExpressionErr("Parts must be separated with spaces.");
+                    i++;
+                }
+                else isQuote=true;
+
+            }
+            else if(s.charAt(i)=='\\')
+            {
+                if(i+1==s.length())cur+='\\';
+                else
+                {
+                    switch(s.charAt(i+1))
+                    {
+                        case 'n':
+                            cur+='\n';
+                            i++;
+                            break;
+                        case 't':
+                            cur+='\t';
+                            i++;
+                            break;
+                        case 'b':
+                            cur+='\b';
+                            i++;
+                            break;
+                        case 'r':
+                            cur+='\r';
+                            i++;
+                            break;
+                        case 'f':
+                            cur+='\f';
+                            i++;
+                            break;
+                        case '\\':
+                            cur+='\\';
+                            i++;
+                            break;
+                        case '\"':
+                            cur+='\"';
+                            i++;
+                            break;
+                        case '\'':
+                            cur+='\'';
+                            i++;
+                            break;
+                        default:
+                            cur+='\\';
+                    }
+                }
+            }
+            else if(s.charAt(i)==' ')
+            {
+                if(isQuote)cur+=' ';
+                else {
+                    if(cur.length()!=0)ans.add(cur);
+                    cur="";
+                }
             }
             else
             {
-                if(s.indexOf(" ",rul)==-1) {
-                    ans.add(finalProcess(s.substring(rul)));
-                    rul=s.length();
-                }
-                else {
-                    tmp = s.indexOf(" ",rul);
-                    ans.add(finalProcess(s.substring(rul, tmp)));
-                    rul = tmp + 1;
-                }
+                cur+=s.charAt(i);
             }
-            while(rul<s.length()&&s.charAt(rul)==' ')rul++;
         }
+        if(isQuote)throw new ExpressionErr("Incomplete quotes!");
+        if(cur.length()!=0)ans.add(cur);
         return ans;
     }
 }
