@@ -228,7 +228,7 @@ public class Main {
                                     DeleteStickerFromSet deleteStickerFromSet=new DeleteStickerFromSet(s);
                                     bot.execute(deleteStickerFromSet);
                                 }
-                                for(String i:censoredIds)
+                                for(String i:stickerIds)
                                 {
                                     File f=new File("./censor/"+i);
                                     f.delete();
