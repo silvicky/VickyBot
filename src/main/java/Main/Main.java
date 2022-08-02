@@ -17,6 +17,7 @@ import org.telegram.telegrambots.meta.api.methods.groupadministration.SetChatSti
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.stickers.AddStickerToSet;
 import org.telegram.telegrambots.meta.api.methods.stickers.CreateNewStickerSet;
+import org.telegram.telegrambots.meta.api.methods.stickers.DeleteStickerFromSet;
 import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
@@ -222,6 +223,8 @@ public class Main {
                                 List<String> censoredIds=parseStr(censoredId);
                                 for(String s:censoredIds)
                                 {
+                                    DeleteStickerFromSet deleteStickerFromSet=new DeleteStickerFromSet(s);
+                                    bot.execute(deleteStickerFromSet);
                                     File cf=new File("./censor/"+s);
                                     cf.delete();
                                 }
