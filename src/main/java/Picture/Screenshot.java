@@ -31,13 +31,15 @@ import static java.lang.Math.random;
 public class Screenshot
 {
     static int fontHeight=24;
-    public static int maxWidth=768;
+    public static int maxWidth=512;
     static int split=8;
+    static int charSplit=6;
     public static int avatarSize=64;
     public static int padding=24;
     static int paddingVertical=12;
     static int msgSplit=4;
-    static int maxLen=maxWidth-avatarSize-padding*5;
+    //static int maxLen=maxWidth-avatarSize-padding*5;
+    static int maxLen=maxWidth-avatarSize-padding*6;
     static Graphics2D xG2D;
     public static FontRenderContext frc;
     public static Font font;
@@ -70,7 +72,8 @@ public class Screenshot
         {
             curH+=fontHeight+split;
         }
-        graphic.clearRect(avatarSize+padding*2,y,msgWidth+2*padding,curH);
+        //graphic.clearRect(avatarSize+padding*2,y,msgWidth+2*padding,curH);
+        graphic.clearRect(avatarSize+padding*2,y,msgWidth+3*padding,curH);
         int ix=avatarSize+padding*3,iy=paddingVertical+fontHeight+y-1;
         if(withHead)
         {
@@ -132,11 +135,12 @@ public class Screenshot
                     textLayout = new TextLayout(name, font, frc);
                     Rectangle2D rectangle2D = textLayout.getBounds();
                     double scope = font.getSize() / textLayout.getBounds().getHeight();
-                    msgWidth[i] = Math.max(msgWidth[i], (int) (rectangle2D.getWidth() * scope)+padding*2);
+                    msgWidth[i] = Math.max(msgWidth[i], (int) (rectangle2D.getWidth() * scope));
                     height += fontHeight + split;
                 }
                 lastUser = curID;
-                width = Math.max(width, msgWidth[i]);
+                //width = Math.max(width, msgWidth[i]+padding*2);
+                width = Math.max(width, msgWidth[i]+padding*3);
                 height += paddingVertical * 2 - split + frag[i].size() * (fontHeight + split) + msgSplit;
             }
             else if(msg.get(i).type==FakeMsg.PICTURE)
