@@ -132,6 +132,12 @@ public class IntegerToEnglish {
     }
     public static String numberToWords(int num) {
         String ans="";
+        if(num==0)return "Zero";
+        if(num<0)
+        {
+            ans+="Negative ";
+            num=-num;
+        }
         if(num/1000000000!=0)
         {
             ans+=perThousand(num/1000000000);
