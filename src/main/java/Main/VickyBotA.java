@@ -113,8 +113,13 @@ public class VickyBotA extends AbilityBot {
                     long extratime=100+(long)(random()*200);
                     long unixTimeShut= Instant.now().getEpochSecond()+extratime;
                     RestrictChatMember restrictChatMember=new RestrictChatMember(ctx.chatId().toString(),ctx.user().getId(),chatPermShut,(int)unixTimeShut);
-                    silent.execute(restrictChatMember);
-                    silent.send(ctx.user().getFirstName()+" has been shut for "+ extratime +"s",ctx.chatId());
+                    try
+                    {
+                        silent.execute(restrictChatMember);
+                        silent.send(ctx.user().getFirstName()+" has been shut for "+ extratime +"s",ctx.chatId());
+                    }
+                    catch(Exception e){silent.send("I'm not admin or you are admin!",ctx.chatId());}
+
                 })
                 .build();
     }
@@ -141,10 +146,14 @@ public class VickyBotA extends AbilityBot {
                     long extratime=100+(long)(random()*200);
                     long unixTimeShut= Instant.now().getEpochSecond()+extratime;
                     RestrictChatMember restrictChatMember=new RestrictChatMember(ctx.chatId().toString(),userIds().get(ctx.firstArg().substring(1).toLowerCase()),chatPermShut,(int)unixTimeShut);
-                    silent.execute(restrictChatMember);
-                    GetChatMember getChatMember=new GetChatMember(ctx.chatId().toString(),userIds().get(ctx.firstArg().substring(1).toLowerCase()));
-                    ChatMember chatMember=silent.execute(getChatMember).get();
-                    silent.send(chatMember.getUser().getFirstName()+" has been shut for "+ extratime +"s",ctx.chatId());
+                    GetChatMember getChatMember = new GetChatMember(ctx.chatId().toString(), userIds().get(ctx.firstArg().substring(1).toLowerCase()));
+                    ChatMember chatMember = silent.execute(getChatMember).get();
+                    try
+                    {
+                        silent.execute(restrictChatMember);
+                        silent.send(chatMember.getUser().getFirstName() + " has been shut for " + extratime + "s", ctx.chatId());
+                    }
+                    catch(Exception e){silent.send("I'm not admin or "+chatMember.getUser().getFirstName()+" is admin!",ctx.chatId());}
                 })
                 .build();
     }
@@ -223,7 +232,7 @@ public class VickyBotA extends AbilityBot {
                     }
                     else
                     {
-                        silent.execute(deleteMessage);
+                        try{silent.execute(deleteMessage);}catch(Exception ignored){}
                         String msg=ctx.update().getMessage().getText();
                         try
                         {
@@ -362,7 +371,7 @@ public class VickyBotA extends AbilityBot {
                     }
                     else
                     {
-                        silent.execute(deleteMessage);
+                        try{silent.execute(deleteMessage);}catch(Exception ignored){}
                         long pair=ctx.chatId()*sth+ctx.update().getMessage().getFrom().getId();
                         if(!ssMap.containsKey(pair))
                         {
