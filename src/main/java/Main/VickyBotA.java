@@ -1,6 +1,7 @@
 package Main;
 
 import Eliza.ElizaMain;
+import Expression.Normal;
 import Picture.Screenshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static LispStyle.LispStyle.evaluate;
+import static Expression.LispStyle.evaluate;
+import static Expression.Normal.calculate;
 import static Main.Main.startTime;
 import static Roman.IntegerToEnglish.numberToWords;
 import static Roman.IntegerToRoman.intToRoman;
@@ -341,6 +343,30 @@ public class VickyBotA extends AbilityBot {
                     {
                         String msg=ctx.update().getMessage().getText().toLowerCase();
                         try{silent.send(Long.toString(evaluate(msg.substring(msg.indexOf(" ")+1))),ctx.chatId());}
+                        catch(Exception e){silent.send("ERR: "+e,ctx.chatId());}
+                    }
+                })
+                .build();
+    }
+    public Ability calc()
+    {
+        return Ability.builder()
+                .name("calc")
+                .info("Process normal expression.")
+                .input(0)
+                .locality(ALL)
+                .privacy(PUBLIC)
+                .action(ctx->
+                {
+                    if(ctx.arguments().length==0)silent.send(
+                            "Support:\n" +
+                                    "\t+_*/\n" +
+                                    "Note: these are operations between longs, e.g. 3/2==1\n" +
+                                    "Brackets are not supported now.",ctx.chatId());
+                    else
+                    {
+                        String msg=ctx.update().getMessage().getText().toLowerCase();
+                        try{silent.send(Long.toString(calculate(msg.substring(msg.indexOf(" ")+1))),ctx.chatId());}
                         catch(Exception e){silent.send("ERR: "+e,ctx.chatId());}
                     }
                 })

@@ -12,7 +12,6 @@ import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.SetChatStickerSet;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.stickers.AddStickerToSet;
@@ -21,7 +20,6 @@ import org.telegram.telegrambots.meta.api.methods.stickers.DeleteStickerFromSet;
 import org.telegram.telegrambots.meta.api.methods.stickers.GetStickerSet;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
-import org.telegram.telegrambots.meta.api.objects.stickers.StickerSet;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
@@ -36,7 +34,6 @@ import java.util.Map;
 
 import static Cmd.CmdIO.isCMD;
 import static Cmd.CmdIO.readFromConsole;
-import static LispStyle.LispStyle.deBlank;
 import static MessageParsing.Download.obtainSticker;
 import static Picture.Screenshot.fakeSS;
 import static Picture.Screenshot.to512;
