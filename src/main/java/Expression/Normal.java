@@ -41,6 +41,14 @@ public class Normal {
             }
             else if(c=='(')
             {
+                if(i>0&&(s.charAt(i-1)<='9'&&s.charAt(i-1)>='0'))
+                {
+                    if(mode.peek()) last.push(last.pop()/cur);
+                    else last.push(last.pop()*cur);
+                    cur=0;
+                    mode.pop();
+                    mode.push(false);
+                }
                 isAfterDot=false;
                 ans.push(0.0);
                 last.push(1.0);
