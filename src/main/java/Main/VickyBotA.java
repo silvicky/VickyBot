@@ -365,7 +365,7 @@ public class VickyBotA extends AbilityBot {
                     else
                     {
                         String msg=ctx.update().getMessage().getText().toLowerCase();
-                        try{silent.send(Long.toString(calculate(msg.substring(msg.indexOf(" ")+1))),ctx.chatId());}
+                        try{silent.send(Double.toString(calculate(msg.substring(msg.indexOf(" ")+1))),ctx.chatId());}
                         catch(Exception e){silent.send("ERR: "+e,ctx.chatId());}
                     }
                 })

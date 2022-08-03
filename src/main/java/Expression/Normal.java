@@ -3,33 +3,52 @@ package Expression;
 import java.util.Stack;
 
 public class Normal {
-    public static long calculate(String s) throws ExpressionErr {
-        Stack<Long> ans=new Stack<>();
-        Stack<Long> last=new Stack<>();
+    public static double calculate(String s) throws ExpressionErr {
+        Stack<Double> ans=new Stack<>();
+        Stack<Double> last=new Stack<>();
         Stack<Boolean> mode=new Stack<>();
-        ans.push(0L);
-        last.push(1L);
+        ans.push(0.0);
+        last.push(1.0);
         mode.push(false);
-        long cur=0;
+        double cur=0;
         char c;
+        boolean isAfterDot=false;
+        double curScale=0;
         for(int i=0;i<s.length();i++)
         {
             c=s.charAt(i);
             if(c==' '||c=='\n'||c=='\r'||c=='\t')continue;
             if(c<='9'&&c>='0')
             {
-                c-='0';
-                cur*=10;
-                cur+=c;
+                if(isAfterDot)
+                {
+                    c -= '0';
+                    cur+=curScale*c;
+                    curScale/=10;
+                }
+                else
+                {
+                    c -= '0';
+                    cur *= 10;
+                    cur += c;
+                }
+            }
+            else if(c=='.')
+            {
+                if(isAfterDot)throw new ExpressionErr("Excessive dots!");
+                isAfterDot=true;
+                curScale=0.1;
             }
             else if(c=='(')
             {
-                ans.push(0L);
-                last.push(1L);
+                isAfterDot=false;
+                ans.push(0.0);
+                last.push(1.0);
                 mode.push(false);
             }
             else
             {
+                isAfterDot=false;
                 if(mode.peek()) last.push(last.pop()/cur);
                 else last.push(last.pop()*cur);
                 cur=0;
@@ -42,14 +61,14 @@ public class Normal {
                 else if(c=='+')
                 {
                     ans.push(ans.pop()+last.pop());
-                    last.push(1L);
+                    last.push(1.0);
                     mode.pop();
                     mode.push(false);
                 }
                 else if(c=='-')
                 {
                     ans.push(ans.pop()+last.pop());
-                    last.push(-1L);
+                    last.push(-1.0);
                     mode.pop();
                     mode.push(false);
                 }
