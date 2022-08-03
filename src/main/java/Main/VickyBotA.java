@@ -360,9 +360,8 @@ public class VickyBotA extends AbilityBot {
                 {
                     if(ctx.arguments().length==0)silent.send(
                             "Support:\n" +
-                                    "\t+_*/\n" +
-                                    "Note: these are operations between longs, e.g. 3/2==1\n" +
-                                    "Brackets are not supported now.",ctx.chatId());
+                                    "\t+_*/()\n" +
+                                    "Note: these are operations between longs, e.g. 3/2==1",ctx.chatId());
                     else
                     {
                         String msg=ctx.update().getMessage().getText().toLowerCase();
