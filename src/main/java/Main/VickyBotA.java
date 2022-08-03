@@ -359,9 +359,8 @@ public class VickyBotA extends AbilityBot {
                 .action(ctx->
                 {
                     if(ctx.arguments().length==0)silent.send(
-                            "Support:\n" +
-                                    "\t+_*/()\n" +
-                                    "Note: these are operations between longs, e.g. 3/2==1",ctx.chatId());
+                            "/calc ...\n" +
+                                    "Support:+_*/()",ctx.chatId());
                     else
                     {
                         String msg=ctx.update().getMessage().getText().toLowerCase();
