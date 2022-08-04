@@ -143,7 +143,7 @@ public class Screenshot
                     textLayout = new TextLayout(name, font, frc);
                     Rectangle2D rectangle2D = textLayout.getBounds();
                     double scope = font.getSize() / textLayout.getBounds().getHeight();
-                    msgWidth[i] = Math.max(msgWidth[i], (int) (rectangle2D.getWidth() * scope));
+                    msgWidth[i] = Math.max(msgWidth[i],Math.min(maxLen, (int) (rectangle2D.getWidth() * scope)));
                     height += fontHeight + split;
                 }
                 lastUser = curID;
