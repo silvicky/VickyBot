@@ -113,9 +113,10 @@ public class Screenshot
     }
     public static BufferedImage to512(BufferedImage img)
     {
-        BufferedImage ans=new BufferedImage(512,img.getHeight(),2);
+        int scope=512/img.getWidth();
+        BufferedImage ans=new BufferedImage(512,img.getHeight()*scope,2);
         Graphics2D graphics2D=GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(ans);
-        graphics2D.drawImage(img,new AffineTransformOp(new AffineTransform(),AffineTransformOp.TYPE_NEAREST_NEIGHBOR),(512-img.getWidth())/2,0);
+        graphics2D.drawImage(img,new AffineTransformOp(new AffineTransform(scope,0,0,scope,0,0),AffineTransformOp.TYPE_NEAREST_NEIGHBOR),(512-img.getWidth()*scope)/2,0);
         return ans;
     }
     public static void fakeSS(List<FakeMsg> msg, long target) throws Exception {

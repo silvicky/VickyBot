@@ -177,6 +177,7 @@ public class Main {
                                 inputFile = new InputFile(file512, String.valueOf(ran));
                                 createNewStickerSet.setPngSticker(inputFile);
                                 bot.execute(createNewStickerSet);
+                                file512.delete();
                                 break;
                             case "add":
                                 AddStickerToSet addStickerToSet=new AddStickerToSet();
