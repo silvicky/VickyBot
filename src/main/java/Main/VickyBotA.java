@@ -476,7 +476,7 @@ public class VickyBotA extends AbilityBot {
                 .action(ctx->
                 {
                     Message reply=ctx.update().getMessage().getReplyToMessage();
-                    if(reply==null)
+                    if(reply==null||!reply.hasSticker())
                     {
                         silent.send("Reply to a sticker to use it.",ctx.chatId());
                     }
