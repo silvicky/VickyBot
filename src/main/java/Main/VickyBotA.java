@@ -9,11 +9,13 @@ import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.RestrictChatMember;
+import org.telegram.telegrambots.meta.api.methods.stickers.DeleteStickerFromSet;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.ChatPermissions;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.Instant;
 import java.util.*;
@@ -458,6 +460,38 @@ public class VickyBotA extends AbilityBot {
                         else
                         {
                             silent.send("Unknown argument.",ctx.chatId());
+                        }
+                    }
+                })
+                .build();
+    }
+    public Ability deleteSticker()
+    {
+        return Ability.builder()
+                .name("dels")
+                .info("Delete a sticker.")
+                .input(0)
+                .locality(ALL)
+                .privacy(ADMIN)
+                .action(ctx->
+                {
+                    Message reply=ctx.update().getMessage().getReplyToMessage();
+                    if(reply==null)
+                    {
+                        silent.send("Reply to a sticker to use it.",ctx.chatId());
+                    }
+                    else
+                    {
+                        DeleteStickerFromSet deleteStickerFromSet=new DeleteStickerFromSet();
+                        deleteStickerFromSet.setSticker(reply.getSticker().getFileId());
+                        try
+                        {
+                            execute(deleteStickerFromSet);
+                            silent.send("Done.",ctx.chatId());
+                        }
+                        catch(TelegramApiException e)
+                        {
+                            silent.send("It's not my sticker set!",ctx.chatId());
                         }
                     }
                 })

@@ -205,32 +205,6 @@ public class Main {
                                 setChatStickerSet.setStickerSetName(commands.get(3)+"_by_"+name);
                                 bot.execute(setChatStickerSet);
                                 break;
-                            case "del":
-                                getStickerSet=new GetStickerSet(commands.get(2)+"_by_"+name);
-                                List<Sticker> stickers=bot.execute(getStickerSet).getStickers();
-                                List<String> stickerIds=new ArrayList<>();
-                                for(int i=0;i<stickers.size();i++)
-                                {
-                                    stickerIds.add(stickers.get(i).getFileId());
-                                    obtainSticker(stickers.get(i).getFileId(),"./censor/");
-                                }
-                                System.out.println("Well, check the censor folder and type ALL IDs that you wanna abandon.");
-                                String censoredId=readFromConsole();
-                                if (censoredId.endsWith("\n")) censoredId = censoredId.substring(0,censoredId.length()-1);
-                                if (censoredId.endsWith("\r")) censoredId = censoredId.substring(0,censoredId.length()-1);
-                                List<String> censoredIds=parseStr(censoredId);
-                                for(String s:censoredIds)
-                                {
-                                    DeleteStickerFromSet deleteStickerFromSet=new DeleteStickerFromSet(s);
-                                    bot.execute(deleteStickerFromSet);
-                                }
-                                for(String i:stickerIds)
-                                {
-                                    File f=new File("./censor/"+i);
-                                    f.delete();
-                                }
-                                System.out.println("Done.");
-                                break;
                             default:
                                 logger.error("Unknown command!");
                         }
