@@ -29,9 +29,20 @@ public class AutoDel {
                                 DeleteMessage deleteMessage = new DeleteMessage();
                                 deleteMessage.setChatId(String.valueOf(curMsg.getChatId()));
                                 deleteMessage.setMessageId(curMsg.getMessageId());
-                                Main.bot.execute(deleteMessage);
-                                logger.info("Deleted message: "+curMsg.toString());
-                                Main.bot.msgToBeDel.remove();
+                                try
+                                {
+                                    Main.bot.execute(deleteMessage);
+                                    logger.info("Deleted message: "+curMsg.toString());
+                                    Main.bot.msgToBeDel.remove();
+                                }
+                                catch(TelegramApiException e)
+                                {
+                                    if(e.toString().startsWith("Error deleting message: [400] Bad Request: message to delete not found"))
+                                    {
+                                        logger.info("Trying to delete deleted message: "+curMsg.toString());
+                                        Main.bot.msgToBeDel.remove();
+                                    }
+                                }
                             }
                             else Main.bot.msgToBeDel.remove();
                         }
