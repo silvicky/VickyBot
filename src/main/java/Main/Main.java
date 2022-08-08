@@ -2,10 +2,7 @@ package Main;
 
 import MessageParsing.FakeMsg;
 import MessageParsing.FakeUser;
-import Utility.DateUtil;
-import Utility.GithubUtil;
-import Utility.JiraUtil;
-import Utility.SayUtil;
+import Utility.*;
 import com.hellokaton.webp.WebpIO;
 import com.sun.jna.Platform;
 import org.apache.log4j.PropertyConfigurator;
@@ -79,6 +76,7 @@ public class Main {
         GithubUtil.github();
         JiraUtil.jira();
         DateUtil.say();
+        AutoDel.autoDel();
         String cur="";
         fakeMsgList=new ArrayList<>();
         fakeUserMap=new HashMap<>();

@@ -12,13 +12,11 @@ import org.telegram.telegrambots.meta.api.methods.groupadministration.RestrictCh
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.ChatPermissions;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static Expression.LispStyle.evaluate;
 import static Expression.Normal.calculate;
@@ -35,21 +33,31 @@ import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 public class VickyBotA extends AbilityBot {
     static final int maxEliza=1000;
-    static final int maxSS=1000;
-    static ElizaMain[] eliza;
-    static boolean[] ssMode;
-    static List<Message>[] ssTmp;
-    static Map<Long,Integer> elizaMap;
-    static Map<Long,Integer> ssMap;
-    static boolean[] isElizaOccupied;
-    static boolean[] isSSOccupied;
-    static long sth=3827381L;
+    static final long sth=3827381L;
     static final String scriptPathname = "./cfg/ElizaScript.txt";
-    static long curTime,timeH,timeM,timeS;
+    static final int maxSS=1000;
     static Logger logger= LoggerFactory.getLogger(VickyBotA.class);
+    ElizaMain[] eliza;
+    boolean[] ssMode;
+    List<Message>[] ssTmp;
+    Map<Long,Integer> elizaMap;
+    Map<Long,Integer> ssMap;
+    boolean[] isElizaOccupied;
+    boolean[] isSSOccupied;
+    long curTime,timeH,timeM,timeS;
+    public Queue<Message> msgToBeDel;
+    public void onUpdateReceived(Update update)
+    {
+        if(update.hasMessage()&&update.getMessage().getChatId()==Long.parseLong(Main.groupID))
+        {
+            msgToBeDel.add(update.getMessage());
+        }
+        super.onUpdateReceived(update);
+    }
     public VickyBotA()
     {
         super(Main.token,Main.name);
+        msgToBeDel=new ArrayDeque<>();
         eliza=new ElizaMain[maxEliza];
         elizaMap=new HashMap<>();
         isElizaOccupied=new boolean[maxEliza];
