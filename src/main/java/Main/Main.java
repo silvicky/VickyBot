@@ -76,7 +76,7 @@ public class Main {
         GithubUtil.github();
         JiraUtil.jira();
         DateUtil.say();
-        AutoDel.autoDel();
+        //AutoDel.autoDel();
         String cur="";
         fakeMsgList=new ArrayList<>();
         fakeUserMap=new HashMap<>();

@@ -14,9 +14,10 @@ public class AutoDel {
     static Message curMsg;
     static final long delTime=14400L;
     static Logger logger= LoggerFactory.getLogger(AutoDel.class);
+    public static Thread threadDel;
     public static void autoDel()
     {
-        Thread thread=new Thread()
+        threadDel=new Thread()
         {
             public void run() {
                 while(true) {
@@ -55,6 +56,6 @@ public class AutoDel {
                 }
             }
         };
-        thread.start();
+        threadDel.start();
     }
 }

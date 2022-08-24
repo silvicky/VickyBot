@@ -25,6 +25,7 @@ public class DateUtil {
     static String[] msg;
     static final String sayTextName="./cfg/DateText.txt";
     static Logger logger= LoggerFactory.getLogger(DateUtil.class);
+    public static Thread threadDate;
     public static void say()
     {
 
@@ -59,7 +60,7 @@ public class DateUtil {
         sendMessage.setChatId(groupID);
         TimeZone tz=TimeZone.getDefault();
         int offset=tz.getOffset(Instant.now().getEpochSecond()*1000);
-        Thread threadSay=new Thread(){
+        threadDate=new Thread(){
             public void run()
             {
                 while(true)
@@ -90,6 +91,6 @@ public class DateUtil {
                 }
             }
         };
-        threadSay.start();
+        threadDate.start();
     }
 }

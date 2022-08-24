@@ -35,6 +35,7 @@ public class JiraUtil
     static String[] lastId;
     static String jiraName="./cfg/Jira.txt";
     static Logger logger= LoggerFactory.getLogger(JiraUtil.class);
+    public static Thread threadJira;
     static int findPkg(String source)
     {
         int lev=1,ind=1;
@@ -90,7 +91,7 @@ public class JiraUtil
             logger.error("Failed to read ./cfg/Jira.txt!");
             logger.error(e.toString());
         }
-        Thread jira=new Thread()
+        threadJira=new Thread()
         {
             public void run()
             {
@@ -145,12 +146,12 @@ public class JiraUtil
                     }
                     try {
                         Thread.sleep(60000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    } catch (InterruptedException ignored) {
+
                     }
                 }
             }
         };
-        jira.start();
+        threadJira.start();
     }
 }

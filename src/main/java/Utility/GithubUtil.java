@@ -23,6 +23,7 @@ public class GithubUtil {
     public static String githubToken;
     static String githubName="./cfg/Github.txt";
     static Logger logger= LoggerFactory.getLogger(GithubUtil.class);
+    public static Thread threadGithub;
     public static void github() throws IOException {
         BufferedReader in;
         in = new BufferedReader(new FileReader(githubName));
@@ -31,7 +32,7 @@ public class GithubUtil {
         repoName=new String[len];
         for(int i=0;i<len;i++)repoName[i]=in.readLine();
         GitHub github=new GitHubBuilder().withOAuthToken(githubToken).build();
-        Thread threadGithub=new Thread()
+        threadGithub=new Thread()
         {
             public void run()
             {
@@ -93,8 +94,8 @@ public class GithubUtil {
                     finally {
                         try {
                             Thread.sleep(60000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                        } catch (InterruptedException ignored) {
+
                         }
                     }
                 }

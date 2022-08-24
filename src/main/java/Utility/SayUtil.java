@@ -25,6 +25,7 @@ public class SayUtil {
     static Vector<String>[] msg;
     static final String sayTextName="./cfg/SayText.txt";
     static Logger logger= LoggerFactory.getLogger(SayUtil.class);
+    public static Thread threadSay;
     public static void say()
     {
         int curLine=0;
@@ -65,7 +66,7 @@ public class SayUtil {
         sendMessage.setChatId(groupID);
         TimeZone tz=TimeZone.getDefault();
         int offset=tz.getOffset(Instant.now().getEpochSecond()*1000);
-        Thread threadSay=new Thread(){
+        threadSay=new Thread(){
             public void run()
             {
                 while(true)
