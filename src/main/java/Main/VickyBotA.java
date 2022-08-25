@@ -499,42 +499,4 @@ public class VickyBotA extends AbilityBot {
                 })
                 .build();
     }
-    public Ability chkStatus()
-    {
-        return Ability.builder()
-                .name("chk")
-                .info("Check threads status.")
-                .input(0)
-                .locality(ALL)
-                .privacy(ADMIN)
-                .action(ctx->
-                {
-                    String msg="";
-                    msg+="Time say util: "+threadStatus(SayUtil.threadSay)+"\n";
-                    msg+="Github util: "+threadStatus(GithubUtil.threadGithub)+"\n";
-                    msg+="Jira util: "+threadStatus(JiraUtil.threadJira)+"\n";
-                    msg+="Date say util: "+threadStatus(DateUtil.threadDate)+"\n";
-                    msg+="Auto delete util: "+threadStatus(AutoDel.threadDel)+"\n";
-                    silent.send(msg,ctx.chatId());
-                })
-                .build();
-    }
-    public Ability reanimate()
-    {
-        return Ability.builder()
-                .name("reani")
-                .info("Reanimate dead threads.")
-                .input(0)
-                .locality(ALL)
-                .privacy(ADMIN)
-                .action(ctx->
-                {
-                    if(threadStatus(SayUtil.threadSay)=="DOWN")SayUtil.threadSay.start();
-                    if(threadStatus(GithubUtil.threadGithub)=="DOWN")GithubUtil.threadGithub.start();
-                    if(threadStatus(JiraUtil.threadJira)=="DOWN")JiraUtil.threadJira.start();
-                    if(threadStatus(DateUtil.threadDate)=="DOWN")DateUtil.threadDate.start();
-                    if(threadStatus(AutoDel.threadDel)=="DOWN")AutoDel.threadDel.start();
-                })
-                .build();
-    }
 }
