@@ -10,14 +10,19 @@ import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.RestrictChatMember;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.stickers.DeleteStickerFromSet;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.ChatPermissions;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.Instant;
 import java.util.*;
 
@@ -30,8 +35,7 @@ import static Roman.RomanToInteger.romanToInt;
 import static String.StringExp.decodeString;
 import static Utility.ThreadStatus.threadStatus;
 import static java.lang.Math.random;
-import static org.telegram.abilitybots.api.objects.Locality.ALL;
-import static org.telegram.abilitybots.api.objects.Locality.GROUP;
+import static org.telegram.abilitybots.api.objects.Locality.*;
 import static org.telegram.abilitybots.api.objects.Privacy.ADMIN;
 import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
@@ -495,6 +499,58 @@ public class VickyBotA extends AbilityBot {
                         {
                             silent.send("It's not my sticker set!",ctx.chatId());
                         }
+                    }
+                })
+                .build();
+    }
+    public Ability upload()
+    {
+        return Ability.builder()
+                .name("upload")
+                .info("Call bot to upload sth.")
+                .input(0)
+                .locality(USER)
+                .privacy(ADMIN)
+                .action(ctx->
+                {
+                    String msg=ctx.update().getMessage().getText();
+                    String path=msg.substring(msg.indexOf(" ")+1);
+                    SendDocument sendDocument=new SendDocument(ctx.chatId().toString(),new InputFile(new File(path)));
+                    try {
+                        execute(sendDocument);
+                    } catch (Exception e) {
+                        silent.send("Upload failed!",ctx.chatId());
+                        logger.error("Upload failed!");
+                        logger.error(path);
+                        logger.error(e.toString());
+                    }
+                })
+                .build();
+    }
+    public Ability uploadCpy()
+    {
+        return Ability.builder()
+                .name("uploadc")
+                .info("Call bot to copy and upload sth.")
+                .input(0)
+                .locality(USER)
+                .privacy(ADMIN)
+                .action(ctx->
+                {
+                    String msg=ctx.update().getMessage().getText();
+                    String path=msg.substring(msg.indexOf(" ")+1);
+                    File origin=new File(path);
+                    File dest=new File(path+".tmp");
+                    try {
+                        Files.copy(origin.toPath(),dest.toPath());
+                        SendDocument sendDocument=new SendDocument(ctx.chatId().toString(),new InputFile(dest));
+                        execute(sendDocument);
+                        dest.delete();
+                    } catch (Exception e) {
+                        silent.send("Upload failed!",ctx.chatId());
+                        logger.error("Upload failed!");
+                        logger.error(path);
+                        logger.error(e.toString());
                     }
                 })
                 .build();
