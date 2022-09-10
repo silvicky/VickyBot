@@ -513,17 +513,22 @@ public class VickyBotA extends AbilityBot {
                 .privacy(ADMIN)
                 .action(ctx->
                 {
-                    String msg=ctx.update().getMessage().getText();
-                    String path=msg.substring(msg.indexOf(" ")+1);
-                    SendDocument sendDocument=new SendDocument(ctx.chatId().toString(),new InputFile(new File(path)));
-                    try {
-                        execute(sendDocument);
-                    } catch (Exception e) {
-                        silent.send("Upload failed!",ctx.chatId());
-                        logger.error("Upload failed!");
-                        logger.error(path);
-                        logger.error(e.toString());
-                    }
+                    Thread uploadIt=new Thread(){
+                    public void run() {
+                            String msg=ctx.update().getMessage().getText();
+                            String path=msg.substring(msg.indexOf(" ")+1);
+                            SendDocument sendDocument=new SendDocument(ctx.chatId().toString(),new InputFile(new File(path)));
+                            try {
+                                execute(sendDocument);
+                            } catch (Exception e) {
+                                silent.send("Upload failed!",ctx.chatId());
+                                logger.error("Upload failed!");
+                                logger.error(path);
+                                logger.error(e.toString());
+                            }
+                        }
+                    };
+                    uploadIt.start();
                 })
                 .build();
     }
@@ -542,6 +547,7 @@ public class VickyBotA extends AbilityBot {
                     File origin=new File(path);
                     File dest=new File(path+".tmp");
                     try {
+
                         Files.copy(origin.toPath(),dest.toPath());
                         SendDocument sendDocument=new SendDocument(ctx.chatId().toString(),new InputFile(dest));
                         execute(sendDocument);
