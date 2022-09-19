@@ -4,6 +4,7 @@ import Eliza.ElizaMain;
 import Expression.Normal;
 import Picture.Screenshot;
 import Utility.*;
+import com.sun.jna.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.abilitybots.api.bot.AbilityBot;
@@ -20,8 +21,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.time.Instant;
 import java.util.*;
@@ -94,13 +97,31 @@ public class VickyBotA extends AbilityBot {
                     timeH=(curTime- startTime)/3600;
                     timeM=((curTime- startTime)%3600)/60;
                     timeS=(curTime- startTime)%60;
-                    silent.send("A bot by Vicky Silviana.\nOS: "
-                                +System.getProperty("os.name")
-                                +"\nVer: "
-                                +System.getProperty("os.version")
-                                +"\nArch: "
-                                +System.getProperty("os.arch")
-                                +"\nJavaVer: "
+                    String aboutMsg="A bot by Vicky Silviana.\nOS: "
+                            +System.getProperty("os.name")
+                            +"\nVer: "
+                            +System.getProperty("os.version")
+                            +"\nArch: "
+                            +System.getProperty("os.arch")
+                            +"\n";
+                    if(Platform.isWindows())
+                    {
+                        aboutMsg+="Kernel Version:\n";
+                        try {
+                            BufferedReader ver=new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec("cmd /c ver").getInputStream()));
+                            String verTmp=ver.readLine();
+                            while(verTmp!=null)
+                            {
+                                aboutMsg+=verTmp;
+                                aboutMsg+="\n";
+                                verTmp=ver.readLine();
+                            }
+                        } catch (IOException e) {
+                            aboutMsg+="Failed to get kernel version!";
+                        }
+                    }
+                    silent.send(
+                                aboutMsg+"JavaVer: "
                                 +System.getProperty("java.version")
                                 +"\nUptime:\n"
                                 +timeH+"h"+timeM+"m"+timeS+"s", ctx.chatId());
