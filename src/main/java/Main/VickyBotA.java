@@ -307,14 +307,15 @@ public class VickyBotA extends AbilityBot {
                     {
                         try{this.execute(deleteMessage);}catch(Exception ignored){}
                         String msg=ctx.update().getMessage().getText();
-                        int times;
-                        msg=msg.substring(msg.indexOf(" ")+1);
-                        times=Integer.parseInt(msg.substring(0,msg.indexOf(" ")));
-                        msg=msg.substring(msg.indexOf(" ")+1);
-                        for(int i=0;i<times;i++)
+
                         try
                         {
-                            silent.send(msg,ctx.chatId());
+                            int times;
+                            msg=msg.substring(msg.indexOf(" ")+1);
+                            times=Integer.parseInt(msg.substring(0,msg.indexOf(" ")));
+                            msg=msg.substring(msg.indexOf(" ")+1);
+                            if(times>100)throw new Exception("dON'T BE SO HUNGRY");
+                            for(int i=0;i<times;i++) silent.send(msg,ctx.chatId());
                         }
                         catch(Exception e)
                         {
