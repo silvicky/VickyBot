@@ -285,6 +285,45 @@ public class VickyBotA extends AbilityBot {
                 })
                 .build();
     }
+    public Ability rep()
+    {
+        return Ability.builder()
+                .name("rep")
+                .info("Repeat the message.")
+                .input(0)
+                .locality(ALL)
+                .privacy(PUBLIC)
+                .action(ctx->{
+                    DeleteMessage deleteMessage=new DeleteMessage();
+                    deleteMessage.setMessageId(ctx.update().getMessage().getMessageId());
+                    deleteMessage.setChatId(String.valueOf(ctx.chatId()));
+                    if(ctx.arguments().length==0||ctx.arguments().length==1)
+                    {
+                        silent.send(
+                                "Example: /rep 3 aaa\n" +
+                                "Tips: Commands other than this will be deleted.",ctx.chatId());
+                    }
+                    else
+                    {
+                        try{this.execute(deleteMessage);}catch(Exception ignored){}
+                        String msg=ctx.update().getMessage().getText();
+                        int times;
+                        msg=msg.substring(msg.indexOf(" ")+1);
+                        times=Integer.parseInt(msg.substring(0,msg.indexOf(" ")));
+                        msg=msg.substring(msg.indexOf(" ")+1);
+                        for(int i=0;i<times;i++)
+                        try
+                        {
+                            silent.send(msg),ctx.chatId());
+                        }
+                        catch(Exception e)
+                        {
+                            silent.send("ERR: "+e,ctx.chatId());
+                        }
+                    }
+                })
+                .build();
+    }
     public Ability eliza()
     {
         return Ability.builder()
