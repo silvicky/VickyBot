@@ -314,7 +314,7 @@ public class VickyBotA extends AbilityBot {
                         for(int i=0;i<times;i++)
                         try
                         {
-                            silent.send(msg),ctx.chatId());
+                            silent.send(msg,ctx.chatId());
                         }
                         catch(Exception e)
                         {
