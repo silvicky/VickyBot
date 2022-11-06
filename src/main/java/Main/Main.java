@@ -74,7 +74,7 @@ public class Main {
         botsApi.registerBot(bot);
         SayUtil.say();
         GithubUtil.github();
-        JiraUtil.jira();
+        //JiraUtil.jira();
         DateUtil.say();
         //AutoDel.autoDel();
         String cur="";
