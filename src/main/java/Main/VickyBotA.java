@@ -622,4 +622,24 @@ public class VickyBotA extends AbilityBot {
                 })
                 .build();
     }
+    public Ability askMe()
+    {
+        return Ability.builder()
+                .name("ask")
+                .info("Ask Vicky a question.")
+                .input(0)
+                .locality(ALL)
+                .privacy(PUBLIC)
+                .action(ctx->
+                        {
+                            if(ctx.arguments().length==0){silent.send("Ask something!",ctx.chatId());}
+                            else
+                            {
+                                String msg=ctx.update().getMessage().getText();
+                                silent.send("#ask "+msg.substring(msg.indexOf(" ")+1),Main.creatorId);
+                                silent.send("Done.",ctx.chatId());
+                            }
+                        })
+                .build();
+    }
 }
