@@ -57,8 +57,6 @@ public class Main {
         else isCMD=false;
         File cacheFolder=new File("./cache/");
         if(!cacheFolder.exists())cacheFolder.mkdir();
-        File censorFolder=new File("./censor/");
-        if(!censorFolder.exists())censorFolder.mkdir();
         startTime= Instant.now().getEpochSecond();
         TelegramBotsApi botsApi=new TelegramBotsApi(DefaultBotSession.class);
         try {
