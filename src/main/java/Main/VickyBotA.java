@@ -9,9 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
+import org.telegram.telegrambots.meta.api.methods.ForwardMessage;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.RestrictChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.stickers.DeleteStickerFromSet;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.ChatPermissions;
@@ -640,6 +642,27 @@ public class VickyBotA extends AbilityBot {
                                 silent.send("Done.",ctx.chatId());
                             }
                         })
+                .build();
+    }
+    public Ability pumpMsg()
+    {
+        return Ability.builder()
+                .name("pump")
+                .info("\"Pump\" a message out the group.")
+                .input(0)
+                .locality(GROUP)
+                .privacy(ADMIN)
+                .action(ctx->
+                {
+                    if(!ctx.update().getMessage().isReply())silent.send("Reply to sth.",ctx.chatId());
+                    else
+                    {
+                        Message msg=ctx.update().getMessage().getReplyToMessage();
+                        silent.execute(new SendMessage(ctx.user().getId().toString(),msg.getText()));
+                        silent.execute(new ForwardMessage(ctx.user().getId().toString(),ctx.chatId().toString(),msg.getMessageId()));
+                        silent.execute(new DeleteMessage(ctx.chatId().toString(),ctx.update().getMessage().getMessageId()));
+                    }
+                })
                 .build();
     }
 }
