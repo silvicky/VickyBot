@@ -130,7 +130,7 @@ public class Main {
                                 }
                                 break;
                             case "send":
-                                fakeSS(fakeMsgList,Long.parseLong(commands.get(2)));
+                                fakeSS(fakeMsgList, creatorId);
                                 break;
                             default:
                                 logger.error("Unknown command!");

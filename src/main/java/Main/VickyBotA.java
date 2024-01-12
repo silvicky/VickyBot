@@ -14,19 +14,23 @@ import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMem
 import org.telegram.telegrambots.meta.api.methods.groupadministration.RestrictChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.stickers.DeleteStickerFromSet;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
-import org.telegram.telegrambots.meta.api.objects.ChatPermissions;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.json.*;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.file.Files;
 import java.time.Instant;
 import java.util.*;
@@ -661,6 +665,41 @@ public class VickyBotA extends AbilityBot {
                         silent.execute(new SendMessage(ctx.user().getId().toString(),msg.getText()));
                         silent.execute(new ForwardMessage(ctx.user().getId().toString(),ctx.chatId().toString(),msg.getMessageId()));
                         silent.execute(new DeleteMessage(ctx.chatId().toString(),ctx.update().getMessage().getMessageId()));
+                    }
+                })
+                .build();
+    }
+    public Ability codeforces()
+    {
+        return Ability.builder()
+                .name("cf")
+                .info("Codeforces API.")
+                .input(0)
+                .locality(ALL)
+                .privacy(PUBLIC)
+                .action(ctx->
+                {
+                    if(ctx.arguments().length==0)silent.send("Usage:\n/cf <name>",ctx.chatId());
+                    else
+                    {
+
+                        try {
+                            Scanner sc=new Scanner(new URL("https://codeforces.com/api/user.info?handles="+ctx.firstArg()).openStream());
+                            String str="";
+                            while(sc.hasNext())str+=sc.nextLine();
+                            sc.close();
+                            JSONObject obj=new JSONObject(str).getJSONArray("result").getJSONObject(0);
+                            String ret="";
+                            String keys[]={"handle","country","city","organization","rating","rank","maxRating","maxRank","avatar"};
+                            for(String s:keys)
+                            {
+                                if(obj.has(s))ret+=s+": "+obj.get(s).toString()+"\n";
+                            }
+                            silent.execute(new SendMessage(ctx.chatId().toString(),ret));
+                        } catch (Exception e) {
+                            silent.execute(new SendMessage(ctx.chatId().toString(),"ERR:"+e));
+                        }
+
                     }
                 })
                 .build();
