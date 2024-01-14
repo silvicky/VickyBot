@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.BanChatMember;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.RestrictChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
@@ -37,7 +38,7 @@ import java.util.*;
 
 import static Expression.LispStyle.evaluate;
 import static Expression.Normal.calculate;
-import static Main.Main.startTime;
+import static Main.Main.*;
 import static Roman.IntegerToEnglish.numberToWords;
 import static Roman.IntegerToRoman.intToRoman;
 import static Roman.RomanToInteger.romanToInt;
@@ -701,6 +702,28 @@ public class VickyBotA extends AbilityBot {
                         }
 
                     }
+                })
+                .build();
+    }
+    public Ability bye()
+    {
+        return Ability.builder()
+                .name("sayonara")
+                .info("Codeforces API.")
+                .input(1)
+                .locality(USER)
+                .privacy(ADMIN)
+                .action(ctx->
+                {
+                    try {
+                            BanChatMember banChatMember=new BanChatMember(groupID,Long.parseLong(ctx.firstArg()));
+                            silent.execute(banChatMember);
+                            banChatMember=new BanChatMember(channelID,Long.parseLong(ctx.firstArg()));
+                            silent.execute(banChatMember);
+                            silent.execute(new SendMessage(ctx.chatId().toString(),"SAYONARA"));
+                        } catch (Exception e) {
+                            silent.execute(new SendMessage(ctx.chatId().toString(),"ERR:"+e));
+                        }
                 })
                 .build();
     }

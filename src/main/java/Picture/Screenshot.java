@@ -18,10 +18,8 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import static Main.Main.bot;
 import static Picture.StringFrag.stringFrag;
@@ -70,9 +68,11 @@ public class Screenshot
         if(withHead)
         {
             BufferedImage avatarCur;
-            avatarCur=ImageIO.read(new File(avatar));
-            double avatarScope=(double)avatarSize/avatarCur.getHeight();
-            graphic.drawImage(avatarCur, new AffineTransformOp(new AffineTransform(avatarScope,0,0,avatarScope,0,0),AffineTransformOp.TYPE_NEAREST_NEIGHBOR), padding, y);
+            try {
+                avatarCur = ImageIO.read(new File(avatar));
+                double avatarScope = (double) avatarSize / avatarCur.getHeight();
+                graphic.drawImage(avatarCur, new AffineTransformOp(new AffineTransform(avatarScope, 0, 0, avatarScope, 0, 0), AffineTransformOp.TYPE_NEAREST_NEIGHBOR), padding, y);
+            }catch(Exception ignored){}
             graphic.setPaint(Color.magenta);
             graphic.drawString(name,ix,iy);
             graphic.setPaint(Color.black);
@@ -89,9 +89,11 @@ public class Screenshot
         double pictureScope=(double)msgWidth/width;
         int curH= (int) (height*pictureScope);
         BufferedImage avatarCur;
-        avatarCur=ImageIO.read(new File(avatar));
-        double avatarScope=(double)avatarSize/avatarCur.getHeight();
-        graphic.drawImage(avatarCur, new AffineTransformOp(new AffineTransform(avatarScope,0,0,avatarScope,0,0),AffineTransformOp.TYPE_NEAREST_NEIGHBOR), padding, y);
+        try {
+            avatarCur = ImageIO.read(new File(avatar));
+            double avatarScope = (double) avatarSize / avatarCur.getHeight();
+            graphic.drawImage(avatarCur, new AffineTransformOp(new AffineTransform(avatarScope, 0, 0, avatarScope, 0, 0), AffineTransformOp.TYPE_NEAREST_NEIGHBOR), padding, y);
+        }catch(Exception ignored){}
         BufferedImage pictureCur;
         pictureCur=ImageIO.read(new File(pic));
         graphic.drawImage(pictureCur, new AffineTransformOp(new AffineTransform(pictureScope,0,0,pictureScope,0,0),AffineTransformOp.TYPE_NEAREST_NEIGHBOR), padding*2+avatarSize, y);

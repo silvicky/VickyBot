@@ -18,14 +18,16 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class Download {
     public static String obtainAvatar(long userID) throws TelegramApiException, IOException {
-        String ans=bot.execute(new GetUserProfilePhotos(userID,0,1)).getPhotos().get(0).get(0).getFileId();
+        String ans;
+        try{ans=bot.execute(new GetUserProfilePhotos(userID,0,1)).getPhotos().get(0).get(0).getFileId();
         if(!new File("./cache/"+ans).exists())
         {
             GetFile getFile;
             getFile=new GetFile(ans);
             Files.copy(new URL("https://api.telegram.org/file/bot"+token+"/"+bot.execute(getFile).getFilePath()).openStream(), Paths.get("./cache/"+ans),REPLACE_EXISTING);
         }
-        return ans;
+        return ans;}
+        catch(Exception e){return "";}
     }
     public static void obtainPicture(String picID) throws IOException, TelegramApiException {
         if(!new File("./cache/"+picID).exists())

@@ -46,6 +46,7 @@ public class Main {
     public static long creatorId;
     public static long startTime;
     public static String groupID;
+    public static String channelID;
     public static VickyBotA bot;
     public static boolean isCMD;
     static Logger logger= LoggerFactory.getLogger(Main.class);
@@ -66,6 +67,7 @@ public class Main {
             name = in.readLine();
             creatorId = Long.parseLong(in.readLine());
             groupID = in.readLine();
+            channelID=in.readLine();
 
         }catch(Exception e){logger.info("Failed to read ./BotInfo.txt!");}
         bot=new VickyBotA();

@@ -33,12 +33,14 @@ public class FakeMsg {
     public void setPicture(String picture,int height,int width){this.picture=picture;this.height=height;this.width=width;}
     public static List<FakeMsg> parse(Message msg) throws TelegramApiException, IOException {
         List<FakeMsg> ans=new ArrayList<>();
-        User user=msg.getFrom();
+
+        User user=msg.getForwardFrom();
+        if(user==null)user=msg.getFrom();
         String name=user.getFirstName();
         long id=user.getId();
         if(user.getLastName()!=null)name+=" "+user.getLastName();
         String avatar="./cache/"+obtainAvatar(id);
-        FakeUser fakeUser=new FakeUser(user.getId(),name,avatar);
+        FakeUser fakeUser=new FakeUser(id,name,avatar);
         if (msg.hasPhoto()) {
                 FakeMsg fakeMsg = new FakeMsg(fakeUser, PICTURE);
                 List<PhotoSize> photo = msg.getPhoto();
