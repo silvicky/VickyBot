@@ -748,7 +748,7 @@ public class VickyBotA extends AbilityBot {
                     silent.execute(new SendMessage(ctx.chatId().toString(),
                             "group: "+ctx.chatId().toString()+
                             "\nyou: "+ctx.update().getMessage().getFrom().getId()+
-                            "\nreplyto: "+(ctx.update().getMessage().isReply()?ctx.update().getMessage().getReplyToMessage().getFrom().getId():"nop")));
+                            "\nreplyto: "+(ctx.update().getMessage().isReply()?(ctx.update().getMessage().getReplyToMessage().getFrom().getId()==777000?ctx.update().getMessage().getReplyToMessage().getForwardFromChat().getId():ctx.update().getMessage().getReplyToMessage().getFrom().getId()):"nop")));
                 })
                 .build();
     }
