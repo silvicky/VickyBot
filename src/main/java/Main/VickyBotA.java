@@ -174,7 +174,7 @@ public class VickyBotA extends AbilityBot {
         return Ability.builder()
                 .name("shut")
                 .info("Shut up somebody.")
-                .input(1)
+                .input(0)
                 .locality(GROUP)
                 .privacy(ADMIN)
                 .action(ctx->
@@ -191,8 +191,16 @@ public class VickyBotA extends AbilityBot {
 
                     long extratime=100+(long)(random()*200);
                     long unixTimeShut= Instant.now().getEpochSecond()+extratime;
-                    RestrictChatMember restrictChatMember=new RestrictChatMember(ctx.chatId().toString(),userIds().get(ctx.firstArg().substring(1).toLowerCase()),chatPermShut,(int)unixTimeShut);
-                    GetChatMember getChatMember = new GetChatMember(ctx.chatId().toString(), userIds().get(ctx.firstArg().substring(1).toLowerCase()));
+                    long uid;
+                    if(ctx.update().getMessage().isReply())uid=ctx.update().getMessage().getReplyToMessage().getFrom().getId();
+                    else if(ctx.arguments().length>0)uid=userIds().get(ctx.firstArg().substring(1).toLowerCase());
+                    else
+                    {
+                        silent.send("reply or add an @...",ctx.chatId());
+                        return;
+                    }
+                    RestrictChatMember restrictChatMember=new RestrictChatMember(ctx.chatId().toString(),uid,chatPermShut,(int)unixTimeShut);
+                    GetChatMember getChatMember = new GetChatMember(ctx.chatId().toString(), uid);
                     ChatMember chatMember = silent.execute(getChatMember).get();
                     try
                     {
@@ -724,6 +732,23 @@ public class VickyBotA extends AbilityBot {
                         } catch (Exception e) {
                             silent.execute(new SendMessage(ctx.chatId().toString(),"ERR:"+e));
                         }
+                })
+                .build();
+    }
+    public Ability id()
+    {
+        return Ability.builder()
+                .name("id")
+                .info("Codeforces API.")
+                .input(0)
+                .locality(ALL)
+                .privacy(PUBLIC)
+                .action(ctx->
+                {
+                    silent.execute(new SendMessage(ctx.chatId().toString(),
+                            "group: "+ctx.chatId().toString()+
+                            "\nyou: "+ctx.update().getMessage().getFrom().getId()+
+                            "\nreplyto: "+(ctx.update().getMessage().isReply()?ctx.update().getMessage().getReplyToMessage().getFrom().getId():"nop")));
                 })
                 .build();
     }
