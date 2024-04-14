@@ -16,8 +16,8 @@ import static MessageParsing.Download.*;
 import static Picture.Screenshot.*;
 
 public class FakeMsg {
-    public FakeUser user;
-    public int type;
+    public final FakeUser user;
+    public final int type;
     public static final int TEXT=0;
     public static final int PICTURE=1;
     public String text;
@@ -60,24 +60,6 @@ public class FakeMsg {
                     ans.add(fakeMsg);
                 }
         }
-        if (msg.hasSticker()) {
-                if (!msg.getSticker().getIsAnimated()) {
-                    FakeMsg fakeMsg = new FakeMsg(fakeUser, PICTURE);
-                    String pic = msg.getSticker().getFileId();
-                    obtainSticker(pic,"./cache/");
-                    fakeMsg.setPicture("./cache/" + pic, msg.getSticker().getHeight(), msg.getSticker().getWidth());
-                    ans.add(fakeMsg);
-                } else {
-                    FakeMsg fakeMsg = new FakeMsg(fakeUser, TEXT);
-                    fakeMsg.setText("<AnimatedSticker>");
-                    ans.add(fakeMsg);
-                }
-            }
-        if (msg.hasVideo()) {
-                FakeMsg fakeMsg = new FakeMsg(fakeUser, TEXT);
-                fakeMsg.setText("<Video>");
-                ans.add(fakeMsg);
-            }
         if (msg.getCaption() != null) {
                 FakeMsg fakeMsg = new FakeMsg(fakeUser, TEXT);
                 fakeMsg.setText(msg.getCaption());

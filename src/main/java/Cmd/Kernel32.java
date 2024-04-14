@@ -1,6 +1,5 @@
 package Cmd;
 
-import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
@@ -10,7 +9,7 @@ public class Kernel32{
     {
         Native.register("Kernel32");
     }
-    public static int STD_INPUT_HANDLE=-10;
+    public static final int STD_INPUT_HANDLE=-10;
     public static int STD_OUTPUT_HANDLE = -11;
     public static int STD_ERROR_HANDLE=-12;
     public static native boolean WriteConsoleW(

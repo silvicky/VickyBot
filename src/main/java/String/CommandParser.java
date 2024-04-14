@@ -6,7 +6,7 @@ import java.util.List;
 public class CommandParser {
     public static List<String> parseStr(String s) throws ExpressionErr {
         List<String> ans=new ArrayList<>();
-        String cur="";
+        StringBuilder cur= new StringBuilder();
         boolean isQuote=false;
         for(int i=0;i<s.length();i++)
         {
@@ -14,8 +14,8 @@ public class CommandParser {
             {
                 if(isQuote)
                 {
-                    ans.add(cur);
-                    cur="";
+                    ans.add(cur.toString());
+                    cur = new StringBuilder();
                     isQuote=false;
                     if(i+1<s.length()&&s.charAt(i+1)!=' ')throw new ExpressionErr("Parts must be separated with spaces.");
                     i++;
@@ -25,63 +25,63 @@ public class CommandParser {
             }
             else if(s.charAt(i)=='\\')
             {
-                if(i+1==s.length())cur+='\\';
+                if(i+1==s.length()) cur.append('\\');
                 else
                 {
                     switch(s.charAt(i+1))
                     {
                         case 'n':
-                            cur+='\n';
+                            cur.append('\n');
                             i++;
                             break;
                         case 't':
-                            cur+='\t';
+                            cur.append('\t');
                             i++;
                             break;
                         case 'b':
-                            cur+='\b';
+                            cur.append('\b');
                             i++;
                             break;
                         case 'r':
-                            cur+='\r';
+                            cur.append('\r');
                             i++;
                             break;
                         case 'f':
-                            cur+='\f';
+                            cur.append('\f');
                             i++;
                             break;
                         case '\\':
-                            cur+='\\';
+                            cur.append('\\');
                             i++;
                             break;
                         case '\"':
-                            cur+='\"';
+                            cur.append('\"');
                             i++;
                             break;
                         case '\'':
-                            cur+='\'';
+                            cur.append('\'');
                             i++;
                             break;
                         default:
-                            cur+='\\';
+                            cur.append('\\');
                     }
                 }
             }
             else if(s.charAt(i)==' ')
             {
-                if(isQuote)cur+=' ';
+                if(isQuote) cur.append(' ');
                 else {
-                    if(cur.length()!=0)ans.add(cur);
-                    cur="";
+                    if(cur.length() > 0)ans.add(cur.toString());
+                    cur = new StringBuilder();
                 }
             }
             else
             {
-                cur+=s.charAt(i);
+                cur.append(s.charAt(i));
             }
         }
         if(isQuote)throw new ExpressionErr("Incomplete quotes!");
-        if(cur.length()!=0)ans.add(cur);
+        if(cur.length() > 0)ans.add(cur.toString());
         return ans;
     }
 }

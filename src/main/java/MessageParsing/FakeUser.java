@@ -1,9 +1,9 @@
 package MessageParsing;
 
 public class FakeUser {
-    public String name;
-    public String avatar;
-    public long userID;
+    public final String name;
+    public final String avatar;
+    public final long userID;
     public FakeUser(long userID,String name,String avatar)
     {
         this.userID=userID;

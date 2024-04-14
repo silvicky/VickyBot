@@ -28,17 +28,17 @@ import static java.lang.Math.random;
 public class Screenshot
 {
     static int fontHeight=36;
-    public static int maxWidth=512;
-    static int split=8;
-    public static int avatarSize=64;
-    public static int padding=24;
-    static int paddingVertical=12;
-    static int msgSplit=4;
-    static int maxLen=maxWidth-avatarSize-padding*6;
+    public static final int maxWidth=512;
+    static final int split=8;
+    public static final int avatarSize=64;
+    public static final int padding=24;
+    static final int paddingVertical=12;
+    static final int msgSplit=4;
+    static final int maxLen=maxWidth-avatarSize-padding*6;
     static Graphics2D xG2D;
     public static FontRenderContext frc;
     public static Font font;
-    static Logger logger= LoggerFactory.getLogger(Screenshot.class);
+    static final Logger logger= LoggerFactory.getLogger(Screenshot.class);
     public static void sendImageAsSticker(BufferedImage img,long target) throws Exception {
         InputFile inputFile=new InputFile();
         int ran=(int)(random()*1000000000);
