@@ -1,6 +1,6 @@
 package Picture;
 
-import jdk.internal.net.http.common.Pair;
+import org.glassfish.grizzly.utils.Pair;
 
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
@@ -47,14 +47,14 @@ public class StringFrag {
         while(source.contains("\n"))
         {
             tmp=stringFragPerLine(source.substring(0,source.indexOf("\n")));
-            ans.addAll(tmp.first);
-            maxVal=Math.max(maxVal,tmp.second);
+            ans.addAll(tmp.getFirst());
+            maxVal=Math.max(maxVal, tmp.getSecond());
             source=source.substring(source.indexOf("\n")+1);
         }
         if(source.length()==0)source=" ";
         tmp=stringFragPerLine(source);
-        ans.addAll(tmp.first);
-        maxVal=Math.max(maxVal,tmp.second);
+        ans.addAll(tmp.getFirst());
+        maxVal=Math.max(maxVal, tmp.getSecond());
         return new Pair<>(ans,maxVal);
     }
 }
