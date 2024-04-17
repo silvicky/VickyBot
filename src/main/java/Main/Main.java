@@ -33,11 +33,13 @@ public class Main {
     public static String token;
     static final String infoPathname="./cfg/BotInfo.txt";
     static final String fedPathname="./cfg/fed.txt";
+    static final String banPathname="./cfg/ban.txt";
     static final String cfgPathname="./cfg/log4j.properties";
     public static String name;
     public static long creatorId;
     public static long startTime;
     public static List<String> JTSN_FEDERATION;
+    public static List<String> BANNED_LIST;
     public static String groupID;
     public static String channelID;
     public static VickyBotA bot;
@@ -75,8 +77,8 @@ public class Main {
         fakeMsgList=new ArrayList<>();
         fakeUserMap=new HashMap<>();
         JTSN_FEDERATION=new ArrayList<>();
+        BufferedReader in;
         try {
-            BufferedReader in;
             in = new BufferedReader(new FileReader(fedPathname));
             String id=in.readLine();
             while(id!=null)
@@ -84,6 +86,18 @@ public class Main {
                 if(!id.startsWith("#"))JTSN_FEDERATION.add(id);
                 id=in.readLine();
             }
+            in.close();
+        }catch(Exception ignored){}
+        BANNED_LIST=new ArrayList<>();
+        try {
+            in = new BufferedReader(new FileReader(banPathname));
+            String id=in.readLine();
+            while(id!=null)
+            {
+                if(!id.startsWith("#"))BANNED_LIST.add(id);
+                id=in.readLine();
+            }
+            in.close();
         }catch(Exception ignored){}
         BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(System.in));
         while(true)

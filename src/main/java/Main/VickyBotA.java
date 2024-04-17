@@ -16,11 +16,9 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.time.Instant;
 import java.util.*;
@@ -298,15 +296,31 @@ public class VickyBotA extends AbilityBot {
                 .privacy(ADMIN)
                 .action(ctx->
                 {
-                    try {
-                            for(String id:JTSN_FEDERATION)
-                            {
-                                execute(new BanChatMember(id,Long.parseLong(ctx.firstArg())));
-                            }
-                            silent.execute(new SendMessage(ctx.chatId().toString(),"SAYONARA"));
-                        } catch (Exception e) {
-                            silent.execute(new SendMessage(ctx.chatId().toString(),"ERR:"+e));
+                    if(ctx.firstArg().startsWith("-"))
+                    {
+                        try{Long.parseLong(ctx.firstArg());}catch (Exception e){return;}
+                        try {
+                            BANNED_LIST.add(ctx.firstArg());
+                            BufferedWriter writ=new BufferedWriter(new FileWriter(banPathname));
+                            writ.newLine();
+                            writ.write(ctx.firstArg());
+                            writ.close();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
                         }
+                    }
+                    String err="";
+                    for(String shid:BANNED_LIST)
+                    {
+                        try {
+                            for(String id:JTSN_FEDERATION)execute(new BanChatMember(id,Long.parseLong(shid)));
+                        } catch (TelegramApiException e) {
+                            err+=shid;
+                            err+=" ";
+                        }
+                    }
+                    silent.execute(new SendMessage(ctx.chatId().toString(),"SAYONARA"));
+                    silent.execute(new SendMessage(ctx.chatId().toString(),err));
                 })
                 .build();
     }
