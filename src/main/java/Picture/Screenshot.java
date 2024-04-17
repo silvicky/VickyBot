@@ -1,7 +1,7 @@
 package Picture;
 
 import MessageParsing.FakeMsg;
-import Utility.CustomPair;
+import jdk.internal.net.http.common.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
@@ -129,9 +129,9 @@ public class Screenshot
         {
             curID=msg.get(i).user.userID;
             if(msg.get(i).type==FakeMsg.TEXT) {
-                CustomPair<List<String>, Integer> tmp = stringFrag(msg.get(i).text);
-                frag[i] = tmp.val1;
-                msgWidth[i] = tmp.val2;
+                Pair<List<String>,Integer> tmp=stringFrag(msg.get(i).text);
+                frag[i] = tmp.first;
+                msgWidth[i] = tmp.second;
                 if (curID != lastUser) {
                     String name;
                     name = msg.get(i).user.name;
@@ -164,9 +164,9 @@ public class Screenshot
             {
                 curID=msg.get(i).user.userID;
                 if(msg.get(i).type==FakeMsg.TEXT) {
-                    CustomPair<List<String>, Integer> tmp = stringFrag(msg.get(i).text);
-                    frag[i] = tmp.val1;
-                    msgWidth[i] = tmp.val2;
+                    Pair<List<String>, Integer> tmp = stringFrag(msg.get(i).text);
+                    frag[i] = tmp.first;
+                    msgWidth[i] = tmp.second;
                     if (curID != lastUser) {
                         String name;
                         name = msg.get(i).user.name;

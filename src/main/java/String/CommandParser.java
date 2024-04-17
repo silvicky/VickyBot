@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandParser {
-    public static List<String> parseStr(String s) throws ExpressionErr {
+    public static List<String> parseStr(String s) {
         List<String> ans=new ArrayList<>();
         StringBuilder cur= new StringBuilder();
         boolean isQuote=false;
@@ -17,7 +17,7 @@ public class CommandParser {
                     ans.add(cur.toString());
                     cur = new StringBuilder();
                     isQuote=false;
-                    if(i+1<s.length()&&s.charAt(i+1)!=' ')throw new ExpressionErr("Parts must be separated with spaces.");
+                    if(i+1<s.length()&&s.charAt(i+1)!=' ')throw new RuntimeException("Parts must be separated with spaces.");
                     i++;
                 }
                 else isQuote=true;
@@ -80,7 +80,7 @@ public class CommandParser {
                 cur.append(s.charAt(i));
             }
         }
-        if(isQuote)throw new ExpressionErr("Incomplete quotes!");
+        if(isQuote)throw new RuntimeException("Incomplete quotes!");
         if(cur.length() > 0)ans.add(cur.toString());
         return ans;
     }

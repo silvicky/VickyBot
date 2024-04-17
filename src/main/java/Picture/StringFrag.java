@@ -1,8 +1,7 @@
 package Picture;
 
-import Utility.CustomPair;
+import jdk.internal.net.http.common.Pair;
 
-import java.awt.*;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ import java.util.List;
 import static Picture.Screenshot.*;
 
 public class StringFrag {
-    static CustomPair<List<String>,Integer> stringFragPerLine(String source)
+    static Pair<List<String>,Integer> stringFragPerLine(String source)
     {
         List<String>ans=new ArrayList<>();
         if(source.length()==0)source=" ";
@@ -37,25 +36,25 @@ public class StringFrag {
         Rectangle2D rectangle2D=textLayout.getBounds();
         maxVal=Math.max(maxVal,(int)(rectangle2D.getWidth()*scope));
         ans.add(source.substring(lastRul));
-        return new CustomPair<>(ans,maxVal);
+        return new Pair<>(ans,maxVal);
     }
-    public static CustomPair<List<String>,Integer> stringFrag(String source)
+    public static Pair<List<String>,Integer> stringFrag(String source)
     {
         List<String>ans=new ArrayList<>();
-        CustomPair<List<String>,Integer> tmp;
+        Pair<List<String>,Integer> tmp;
         int maxVal=0;
         if(source==null||source.length()==0)source=" ";
         while(source.contains("\n"))
         {
             tmp=stringFragPerLine(source.substring(0,source.indexOf("\n")));
-            ans.addAll(tmp.val1);
-            maxVal=Math.max(maxVal,tmp.val2);
+            ans.addAll(tmp.first);
+            maxVal=Math.max(maxVal,tmp.second);
             source=source.substring(source.indexOf("\n")+1);
         }
         if(source.length()==0)source=" ";
         tmp=stringFragPerLine(source);
-        ans.addAll(tmp.val1);
-        maxVal=Math.max(maxVal,tmp.val2);
-        return new CustomPair<>(ans,maxVal);
+        ans.addAll(tmp.first);
+        maxVal=Math.max(maxVal,tmp.second);
+        return new Pair<>(ans,maxVal);
     }
 }
