@@ -37,7 +37,6 @@ public class VickyBotA extends AbilityBot {
     final Map<Long,Integer> ssMap;
     final boolean[] isSSOccupied;
     long curTime,timeH,timeM,timeS;
-    public final Queue<Message> msgToBeDel;
     public void onUpdateReceived(Update update)
     {
         super.onUpdateReceived(update);
@@ -45,7 +44,6 @@ public class VickyBotA extends AbilityBot {
     public VickyBotA()
     {
         super(Main.token,Main.name);
-        msgToBeDel=new ArrayDeque<>();
         ssMode=new boolean[maxSS];
         ssTmp=new List[maxSS];
         ssMap=new HashMap<>();

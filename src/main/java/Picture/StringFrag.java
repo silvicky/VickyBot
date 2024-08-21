@@ -13,7 +13,7 @@ public class StringFrag {
     static Pair<List<String>,Integer> stringFragPerLine(String source)
     {
         List<String>ans=new ArrayList<>();
-        if(source.length()==0)source=" ";
+        if(source.isEmpty())source=" ";
         int lastRul=0,maxVal=0;
         TextLayout textLayout=new TextLayout(source,font, frc);
         double scope=font.getSize()/textLayout.getBounds().getHeight();
@@ -43,7 +43,7 @@ public class StringFrag {
         List<String>ans=new ArrayList<>();
         Pair<List<String>,Integer> tmp;
         int maxVal=0;
-        if(source==null||source.length()==0)source=" ";
+        if(source.isEmpty())source=" ";
         while(source.contains("\n"))
         {
             tmp=stringFragPerLine(source.substring(0,source.indexOf("\n")));
@@ -51,7 +51,7 @@ public class StringFrag {
             maxVal=Math.max(maxVal, tmp.getSecond());
             source=source.substring(source.indexOf("\n")+1);
         }
-        if(source.length()==0)source=" ";
+        if(source.isEmpty())source=" ";
         tmp=stringFragPerLine(source);
         ans.addAll(tmp.getFirst());
         maxVal=Math.max(maxVal, tmp.getSecond());

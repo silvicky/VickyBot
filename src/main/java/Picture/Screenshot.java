@@ -57,7 +57,7 @@ public class Screenshot
         }
         tmp.delete();
     }
-    public static int renderMsg(Graphics2D graphic,List<String> frag,int y,int msgWidth,boolean withHead,String avatar,String name) throws IOException {
+    public static int renderMsg(Graphics2D graphic,List<String> frag,int y,int msgWidth,boolean withHead,String avatar,String name) {
         int curH=paddingVertical*2-split+frag.size()*(fontHeight+split);
         if(withHead)
         {
@@ -78,10 +78,9 @@ public class Screenshot
             graphic.setPaint(Color.black);
             iy+=fontHeight+split;
         }
-        for(int j=0;j<frag.size();j++)
-        {
-            graphic.drawString(frag.get(j),ix,iy);
-            iy+=fontHeight+split;
+        for (String s : frag) {
+            graphic.drawString(s, ix, iy);
+            iy += fontHeight + split;
         }
         return curH;
     }
@@ -104,14 +103,7 @@ public class Screenshot
         for(Message i:msg)ans.addAll(FakeMsg.parse(i));
         fakeSS(ans,target);
     }
-    public static BufferedImage to512(BufferedImage img)
-    {
-        int scope=512/img.getWidth();
-        BufferedImage ans=new BufferedImage(512,img.getHeight()*scope,2);
-        Graphics2D graphics2D=GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(ans);
-        graphics2D.drawImage(img,new AffineTransformOp(new AffineTransform(scope,0,0,scope,0,0),AffineTransformOp.TYPE_NEAREST_NEIGHBOR),(512-img.getWidth()*scope)/2,0);
-        return ans;
-    }
+
     public static void fakeSS(List<FakeMsg> msg, long target) throws Exception {
         fontHeight=36;
         int height;
@@ -148,7 +140,7 @@ public class Screenshot
             {
                 msgWidth[i] = maxWidth-avatarSize-padding*3;
                 lastUser = 0L;
-                height += (double)(msg.get(i).height)*msgWidth[i]/msg.get(i).width + msgSplit;
+                height += (int) ((double)(msg.get(i).height)*msgWidth[i]/msg.get(i).width + msgSplit);
             }
         }
         if(height>512)
@@ -183,7 +175,7 @@ public class Screenshot
                 {
                     msgWidth[i] = maxWidth-avatarSize-padding*3;
                     lastUser = 0L;
-                    height += (double)(msg.get(i).height)*msgWidth[i]/msg.get(i).width + msgSplit;
+                    height += (int) ((double)(msg.get(i).height)*msgWidth[i]/msg.get(i).width + msgSplit);
                 }
             }
         }

@@ -40,15 +40,11 @@ public class Main {
     public static long startTime;
     public static List<String> JTSN_FEDERATION;
     public static List<String> BANNED_LIST;
-    public static String groupID;
-    public static String channelID;
     public static VickyBotA bot;
     public static boolean isCMD;
     static final Logger logger= LoggerFactory.getLogger(Main.class);
     static List<FakeMsg> fakeMsgList;
     static Map<Long, FakeUser> fakeUserMap;
-    static List<String> upd=new ArrayList<>();
-    static DefaultBotOptions opt=new DefaultBotOptions();
 
 
     public static void main(String[] args) throws Exception {
@@ -59,16 +55,12 @@ public class Main {
         if(!cacheFolder.exists())cacheFolder.mkdir();
         startTime= Instant.now().getEpochSecond();
         TelegramBotsApi botsApi=new TelegramBotsApi(DefaultBotSession.class);
-        //upd.add(AllowedUpdates.)
-        //opt.setAllowedUpdates(upd);
         try {
             BufferedReader in;
             in = new BufferedReader(new FileReader(infoPathname));
             token = in.readLine();
             name = in.readLine();
             creatorId = Long.parseLong(in.readLine());
-            groupID = in.readLine();
-            channelID=in.readLine();
 
         }catch(Exception e){logger.info("Failed to read ./BotInfo.txt!");}
         bot=new VickyBotA();

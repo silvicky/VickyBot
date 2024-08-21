@@ -15,7 +15,7 @@ import static Main.Main.token;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class Download {
-    public static String obtainAvatar(long userID) throws TelegramApiException, IOException {
+    public static String obtainAvatar(long userID) {
         String ans;
         try{ans=bot.execute(new GetUserProfilePhotos(userID,0,1)).getPhotos().get(0).get(0).getFileId();
         if(!new File("./cache/"+ans).exists())

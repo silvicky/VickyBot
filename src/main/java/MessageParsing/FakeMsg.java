@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static MessageParsing.Download.*;
-import static Picture.Screenshot.*;
+import static MessageParsing.Download.obtainAvatar;
+import static MessageParsing.Download.obtainPicture;
 
 public class FakeMsg {
     public final FakeUser user;
