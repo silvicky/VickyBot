@@ -156,6 +156,7 @@ public class Main {
                             default:
                                 logger.error("Unknown command!");
                         }
+                        break;
                     default:
                         logger.error("Unknown command!");
                 }

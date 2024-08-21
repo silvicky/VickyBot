@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
-import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.BanChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
@@ -30,6 +29,7 @@ import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 public class VickyBotA extends AbilityBot {
     static final long sth=3827381L;
+    static final String banned_list="banned_list";
     static final int maxSS=1000;
     static final Logger logger= LoggerFactory.getLogger(VickyBotA.class);
     final boolean[] ssMode;
@@ -211,8 +211,7 @@ public class VickyBotA extends AbilityBot {
                 .privacy(ADMIN)
                 .action(ctx->
                 {
-                    Thread uploadIt=new Thread(){
-                    public void run() {
+                    Thread uploadIt= new Thread(() -> {
                             String msg=ctx.update().getMessage().getText();
                             String path=msg.substring(msg.indexOf(" ")+1);
                             SendDocument sendDocument=new SendDocument(ctx.chatId().toString(),new InputFile(new File(path)));
@@ -224,8 +223,7 @@ public class VickyBotA extends AbilityBot {
                                 logger.error(path);
                                 logger.error(e.toString());
                             }
-                        }
-                    };
+                        });
                     uploadIt.start();
                 })
                 .build();
@@ -296,12 +294,30 @@ public class VickyBotA extends AbilityBot {
                 .privacy(ADMIN)
                 .action(ctx->
                 {
-                    if(ctx.firstArg().startsWith("-"))
+                    Set<String> st=db.getSet(banned_list);
+                    if(st==null){silent.send("err:db",ctx.chatId());return;}
+                    if(!(ctx.firstArg().startsWith("-")||ctx.firstArg().startsWith("r")))
                     {
-                        try{Long.parseLong(ctx.firstArg());}catch (Exception e){return;}
+                        try{Long.parseLong(ctx.firstArg());}catch (Exception e){silent.send("NaN",ctx.chatId());return;}
+                        if(BANNED_LIST.contains(ctx.firstArg())){silent.send("exist",ctx.chatId());return;}
                         try {
                             BANNED_LIST.add(ctx.firstArg());
-                            BufferedWriter writ=new BufferedWriter(new FileWriter(banPathname));
+                            BufferedWriter writ=new BufferedWriter(new FileWriter(banPathname,true));
+                            writ.newLine();
+                            writ.write(ctx.firstArg());
+                            writ.close();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    if(ctx.firstArg().startsWith("-"))
+                    {
+                        try{Long.parseLong(ctx.firstArg());}catch (Exception e){silent.send("NaN",ctx.chatId());return;}
+                        if(JTSN_FEDERATION.contains(ctx.firstArg())){silent.send("exist",ctx.chatId());return;}
+
+                        try {
+                            JTSN_FEDERATION.add(ctx.firstArg());
+                            BufferedWriter writ=new BufferedWriter(new FileWriter(fedPathname,true));
                             writ.newLine();
                             writ.write(ctx.firstArg());
                             writ.close();
@@ -310,17 +326,24 @@ public class VickyBotA extends AbilityBot {
                         }
                     }
                     String err="";
-                    for(String shid:BANNED_LIST)
+                    for(String shid:BANNED_LIST)for(String id:JTSN_FEDERATION)
                     {
+                        if(st.contains(shid+"@"+id))continue;
                         try {
-                            for(String id:JTSN_FEDERATION)execute(new BanChatMember(id,Long.parseLong(shid)));
+
+
+                                execute(new BanChatMember(id,Long.parseLong(shid)));
+                                st.add(shid+"@"+id);
+                                silent.send("Banned "+shid+" for "+id,ctx.chatId());
+                                db.commit();
+
                         } catch (TelegramApiException e) {
-                            err+=shid;
+                            err+=shid+","+id;
                             err+=" ";
                         }
                     }
                     silent.execute(new SendMessage(ctx.chatId().toString(),"SAYONARA"));
-                    silent.execute(new SendMessage(ctx.chatId().toString(),err));
+                    if(!err.isEmpty())silent.execute(new SendMessage(ctx.chatId().toString(),err));
                 })
                 .build();
     }
@@ -333,12 +356,10 @@ public class VickyBotA extends AbilityBot {
                 .locality(ALL)
                 .privacy(PUBLIC)
                 .action(ctx->
-                {
-                    silent.execute(new SendMessage(ctx.chatId().toString(),
-                            "group: "+ctx.chatId().toString()+
-                            "\nyou: "+ctx.update().getMessage().getFrom().getId()+
-                            "\nreplyto: "+(ctx.update().getMessage().isReply()?(ctx.update().getMessage().getReplyToMessage().getFrom().getId()==777000?ctx.update().getMessage().getReplyToMessage().getForwardFromChat().getId():ctx.update().getMessage().getReplyToMessage().getFrom().getId()):"nop")));
-                })
+                        silent.execute(new SendMessage(ctx.chatId().toString(),
+                                "group: "+ctx.chatId().toString()+
+                                "\nyou: "+ctx.update().getMessage().getFrom().getId()+
+                                "\nreplyto: "+(ctx.update().getMessage().isReply()?(ctx.update().getMessage().getReplyToMessage().getFrom().getId()==777000?ctx.update().getMessage().getReplyToMessage().getForwardFromChat().getId():ctx.update().getMessage().getReplyToMessage().getFrom().getId()):"nop"))))
                 .build();
     }
 }
